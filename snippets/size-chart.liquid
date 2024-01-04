@@ -1,0 +1,142 @@
+{%- comment -%}
+  Renders product's size chart
+
+  Accepts:
+  - product: {Object} Shopify product
+
+  Usage:
+  {%- render 'size-chart', product: product -%}
+{%- endcomment -%}
+
+{%- liquid
+  assign product_type = product.type | handleize
+  assign in_table = product.metafields.measurements.in_table
+  assign cm_table = product.metafields.measurements.cm_table
+  assign how_to_measure_table = shop.metafields.types.how_to_measure_table[product_type]
+  assign how_to_measure_image = shop.metafields.types.how_to_measure_image[product_type] | first
+  assign size_conversion_table = shop.metafields.types.size_conversion[product_type]
+-%}
+
+{%- if how_to_measure_table != blank and size_conversion_table != blank -%}
+  {%- render 'stylesheet', name: 'dropdown-block', loading: 'defer' -%}
+  {%- render 'stylesheet', name: 'tabs', loading: 'defer' -%}
+  {%- render 'stylesheet', name: 'size-chart', loading: 'defer' -%}
+
+  {%- assign current_tab = 'products.size_chart.product_measurements' | t -%}
+
+  {%- if in_table == blank -%}
+    {%- assign current_tab = 'products.size_chart.how_to_measure' | t -%}
+  {%- endif -%}
+
+  <div class="size-chart">
+    <dropdown-block data-dropdown class="size-chart__mobile-dropdown">
+      <div data-current class="size-chart__mobile-dropdown-current">
+        {{- current_tab -}}
+      </div>
+      <div class="size-chart__mobile-dropdown-list" data-dropdown-list>
+        <label data-item class="tabs__title size-chart__mobile-dropdown-current" for="tab-size-guide-measurements">
+          {{- 'products.size_chart.product_measurements' | t -}}
+        </label>
+        {%- if how_to_measure_table != blank -%}
+          <label data-item class="tabs__title size-chart__mobile-dropdown-current" for="tab-size-guide-how-to-measure">
+            {{- 'products.size_chart.how_to_measure' | t -}}
+          </label>
+        {%- endif -%}
+        {%- if size_conversion_table != blank -%}
+          <label data-item class="tabs__title size-chart__mobile-dropdown-current" for="tab-size-guide-size-conversion">
+            {{- 'products.size_chart.size_conversion' | t -}}
+          </label>
+        {%- endif -%}
+      </div>
+    </dropdown-block>
+    <div class="tabs size-chart__tabs">
+      {%- if in_table != blank or cm_table != blank -%}
+        <input name="tab-size-chart" checked id="tab-size-guide-measurements" class="visually-hidden" type="radio">
+        <label class="tabs__title" for="tab-size-guide-measurements">
+          {{- 'products.size_chart.product_measurements' | t -}}
+        </label>
+        <div class="tabs__content">
+          <div class="tabs tabs--compact">
+            {%- if in_table != blank -%}
+              <input
+                checked
+                name="tab-size-chart-measurements"
+                id="tab-size-guide-measurements-in"
+                class="visually-hidden"
+                type="radio"
+              >
+              <label class="tabs__title tabs__title--compact" for="tab-size-guide-measurements-in">
+                {{- 'products.size_chart.in' | t -}}
+              </label>
+              <div class="tabs__content">
+                {{ in_table }}
+              </div>
+            {%- endif -%}
+            {%- if cm_table != blank -%}
+              <input
+                {% if in_table == blank %}
+                  checked
+                {% endif %}
+                name="tab-size-chart-measurements"
+                id="tab-size-guide-measurements-cm"
+                class="visually-hidden"
+                type="radio"
+              >
+              <label class="tabs__title tabs__title--compact" for="tab-size-guide-measurements-cm">
+                {{- 'products.size_chart.cm' | t -}}
+              </label>
+              <div class="tabs__content">
+                {{ cm_table }}
+              </div>
+            {%- endif -%}
+          </div>
+        </div>
+      {%- endif -%}
+
+      {%- if how_to_measure_table != blank -%}
+        <input
+          {% if in_table == blank and cm_table == blank %}
+            checked
+          {% endif %}
+          name="tab-size-chart"
+          id="tab-size-guide-how-to-measure"
+          class="visually-hidden"
+          type="radio"
+        >
+        <label class="tabs__title" for="tab-size-guide-how-to-measure">
+          {{- 'products.size_chart.how_to_measure' | t -}}
+        </label>
+        <div class="tabs__content">
+          <div class="size-chart__text-img">
+            {{ how_to_measure_table }}
+            {%- if how_to_measure_image -%}
+              <img
+                loading="lazy"
+                src="{{ how_to_measure_image.cloudinary_src | append: "w_200" }}"
+                alt="{{ how_to_measure_image.alt }}"
+              >
+            {%- endif -%}
+          </div>
+        </div>
+      {%- endif -%}
+
+      {%- if size_conversion_table != blank -%}
+        <input
+          {% if in_table == blank and cm_table == blank and how_to_measure_table == blank %}
+            checked
+          {% endif %}
+          name="tab-size-chart"
+          id="tab-size-guide-size-conversion"
+          class="visually-hidden"
+          type="radio"
+        >
+        <label class="tabs__title" for="tab-size-guide-size-conversion">
+          {{- 'products.size_chart.size_conversion' | t -}}
+        </label>
+        <div class="tabs__content">
+          {{ size_conversion_table }}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+{%- endif -%}

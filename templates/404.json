@@ -1,0 +1,52 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-404",
+      "settings": {
+        "btn_text": "Back to home",
+        "btn_link": "\/"
+      }
+    },
+    "166199347035c7d4b0": {
+      "type": "image-with-text",
+      "blocks": {
+        "339cba6b-9941-465d-8c90-1015b2d9afaf": {
+          "type": "image",
+          "settings": {
+            "image": "shopify:\/\/shop_images\/L1660010__4-5_F.jpg",
+            "bg_color": "",
+            "text": "",
+            "link": ""
+          }
+        },
+        "b8b4c638-cceb-4180-8c25-fa03c51f8f3f": {
+          "type": "image",
+          "settings": {
+            "image": "shopify:\/\/shop_images\/L1660939_F_4-5.jpg",
+            "bg_color": "",
+            "text": "",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "339cba6b-9941-465d-8c90-1015b2d9afaf",
+        "b8b4c638-cceb-4180-8c25-fa03c51f8f3f"
+      ],
+      "settings": {
+        "layout_style": "5",
+        "bg_color": "",
+        "copy_color": "",
+        "eyebrow": "",
+        "heading": "Fall 2022",
+        "text": "",
+        "button_text": "Shop All",
+        "button_link": "shopify:\/\/collections\/all"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "166199347035c7d4b0"
+  ]
+}

@@ -1,0 +1,13 @@
+{% render 'stylesheet', name: 'page' %}
+
+{%- render 'page' with page: page -%}
+
+{% schema %} 
+{
+  "name": "Page",
+  "tag": "article",
+  "class": "section-page",
+  "settings": [],
+  "blocks": []
+}
+{% endschema %}

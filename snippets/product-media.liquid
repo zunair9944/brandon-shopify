@@ -1,0 +1,26 @@
+{% comment %}
+  Renders a product media
+
+  Accepts:
+  - media: {Object} Shopify media object
+  - class {String} Class for media
+  - width {Number} Width for media
+  - height {Number} Height for media
+  - alt {String} Media Alt
+  - tag_width {Number} Width for media tag
+  - tag_height {Number} height for media
+  - video_autoplay {Boolean} Autoplays video
+  - video_controls {Boolean} Show controls
+  - index: {Number} Loop index
+  
+  Usage:
+  {%- render 'product-media', media: media, class: class, width: width, height: height, tag_width: tag_width, tag_height: tag_height, alt: alt -%}
+{% endcomment %}
+
+{%- if media.media_type == "image" -%}
+  {{- media | image_url: width: width, height: height | image_tag: class: class, data-media: index, width: tag_width, height: tag_height, loading: "lazy", alt: alt -}}
+{%- elsif media.media_type == 'video' -%}
+  {{- media | video_tag: autoplay: video_autoplay, class: class, data-media: index, width: tag_width, height: tag_height, loading: "lazy", preload: "none", alt: alt, controls: video_controls -}}
+{%- elsif media.media_type == 'external_video' -%}
+  {{- media | external_video_tag: class: class, data-media: index, loading: 'lazy' -}}
+{%- endif -%}

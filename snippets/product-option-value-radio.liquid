@@ -1,0 +1,52 @@
+{%- comment -%}
+  Renders product's option value radio input
+
+  Accepts:
+  - option: {Object} Shopify product_option object
+  - value: {String} Option value that needs to be rendered
+  - url: {String} Renders a link instead of a radio input
+  - color_img: {Image} Color image
+  - available {Boolean} Product availability
+
+  Usage:
+  {%- render 'product-option-value-radio', option: option, value: value -%}
+{%- endcomment -%}
+
+{%- capture option_content -%}
+  {%- if color_img != blank -%}
+    <span class="product-section__option-button product-section__option-button--color{% unless available %} product-section__option-button--disabled{% endunless %}">
+      <span>
+        <small>{{ value }}</small>
+      </span>
+      {{- color_img | image_url: width: 20, height: 20 | image_tag: loading: "lazy", alt: value -}}
+    </span>
+  {%- else -%}
+    <span
+      {% unless url %}
+        class="product-section__option-button"
+      {% endunless %}
+    >
+      {{- value -}}
+    </span>
+  {%- endif -%}
+{%- endcapture -%}
+
+{%- if url -%}
+  <a href="{{ url }}">
+    {{ option_content }}
+  </a>
+{%- else -%}
+  <label>
+    <input
+      class="product-section__option-value visually-hidden"
+      type="radio"
+      name="option-{{ option.position }}"
+      value="{{ value | escape }}"
+      data-product-option
+      {% if option.selected_value == value %}
+        checked
+      {% endif %}
+    >
+    {{ option_content }}
+  </label>
+{%- endif -%}

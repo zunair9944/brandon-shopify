@@ -1,0 +1,577 @@
+{% comment %}
+  Renders a product section
+
+  Accepts:
+  - product: {Object} Shopify product object
+  - section {Object} Shopify section object
+
+  Usage:
+  {%- render 'product-section', product: product, section: section -%}
+{% endcomment %}
+
+{%- render 'stylesheet', name: 'product-section' -%}
+
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+
+  assign product_custom_badge = ''
+  assign product_material = ''
+  assign product_style = ''
+  assign product_occasion = ''
+  assign color_name = ''
+  assign group_collection = null
+  assign is_coming_soon = false
+  assign is_preorder = false
+  assign has_custom_badge = false
+  assign is_stock_notify = true
+  assign is_coming_soon_notify = false
+  assign is_sold_out = false
+  assign no_notify = false
+  assign show_bis_button = false
+  for tag in product.tags
+    if tag contains 'COMING SOON'
+      assign is_coming_soon = true
+    elsif tag contains 'Pre-Order'
+      assign is_preorder = true
+    elsif tag contains 'No-Notify'
+      assign is_stock_notify = false
+    elsif tag contains 'badge::'
+      assign tag_string_array = tag | split: '::'
+      assign product_custom_badge = tag_string_array | last | strip | escape
+    endif
+
+    if tag contains 'prodGroup::'
+      assign group_handle = tag | split: '::' | last | handleize
+      for collection_i in product.collections
+        if collection_i.handle == group_handle
+          assign group_collection = collection_i
+          break
+        endif
+      endfor
+    endif
+  endfor
+
+  if current_variant.available == false
+    assign is_sold_out = true
+  endif
+
+  if is_sold_out == false or no_notify or is_preorder
+    assign is_stock_notify = false
+  endif
+
+  if is_coming_soon and is_sold_out
+    assign is_coming_soon_notify = true
+    assign is_stock_notify = false
+  endif
+
+  if is_coming_soon
+    assign product_badge = 'products.labels.coming_soon' | t
+  elsif is_preorder
+    assign product_badge = 'products.labels.pre_order' | t
+  elsif current_variant.available == false
+    assign product_badge = 'products.labels.sold_out' | t
+  else
+    assign product_badge = product_custom_badge
+    assign has_custom_badge = true
+  endif
+
+  if is_sold_out and is_stock_notify or is_coming_soon_notify
+    assign show_bis_button = true
+  endif
+
+  assign size_chart_html = ''
+-%}
+
+{%- comment -%} Options block html {%- endcomment -%}
+{%- capture options_block_html -%}
+  {%- if product.has_only_default_variant -%}
+    <input name="id" value="{{ current_variant.id }}" type="hidden">
+  {%- else -%}
+    <div class="product-section_options-block">
+      {%- for option in product.options_with_values -%}
+        {%- liquid
+          assign option_name_downcase = option.name | downcase | strip
+          assign product_type = product.type | handleize
+
+          if option_name_downcase == 'size' and size_chart_html == blank
+            capture size_chart_html
+              render 'size-chart', product: product
+            endcapture
+          endif
+        -%}
+
+        <div class="product-section__option">
+          <span class="product-section__option-name">{{ option.name | escape }}</span>
+          <span
+            data-dynamic="selected-option-{{ option.name }}"
+            class="product-section__option-selected-value"
+          >
+            {{- option.selected_value | escape -}}
+          </span>
+          {%- if size_chart_html != blank and option_name_downcase == 'size' -%}
+            <modal-opener data-modal="#ModalDialogSizeChart" class="product-section__size-button">
+              <button type="button" class="button-3">
+                {{ 'products.size_chart.button_title' | t }}
+              </button>
+            </modal-opener>
+          {%- endif -%}
+        </div>
+
+        <div class="product-section__option-values">
+          <div class="product-section__options-values-wrapper">
+            {%- liquid
+              assign product_swatch_image = null
+
+              if option_name_downcase == 'color' or option_name_downcase == 'colour'
+                assign product_swatch_image = product.metafields.swatch.image
+                assign color_name = option.values | first
+              endif
+
+              if group_collection.products_count > 1 and forloop.first
+                assign available_products = group_collection.products | where: 'available', true
+                assign unavailable_products = group_collection.products | where: 'available', false
+                assign sorted_products = available_products | concat: unavailable_products
+                for group_product in sorted_products
+                  if group_product == product
+                    for value in option.values
+                      render 'product-option-value-radio', option: option, value: value, color_img: product_swatch_image, available: group_product.available
+                    endfor
+                  else
+                    for group_product_value in group_product.options_with_values[0].values
+                      if group_product.metafields.swatch.image != blank
+                        render 'product-option-value-radio', value: group_product_value, url: group_product.url, color_img: group_product.metafields.swatch.image, available: group_product.available
+                      endif
+                    endfor
+                  endif
+                endfor
+              else
+                for value in option.values
+                  render 'product-option-value-radio', option: option, value: value, color_img: product_swatch_image, available: product.available
+                endfor
+              endif
+            -%}
+          </div>
+        </div>
+      {%- endfor -%}
+
+      <div class="product-section__option product-section__option--variants">
+        <div class="product-section__option-title">
+          <b>{{ 'products.product.product_variants' | t }}</b>
+        </div>
+        <select name="id" class="product-section__variants-select" tabindex="-1">
+          {%- for variant in product.variants -%}
+            <option
+              {% if variant == current_variant %}
+                selected="selected"
+              {% endif %}
+              value="{{ variant.id }}"
+              {% unless variant.available %}
+                disabled
+              {% endunless %}
+            >
+              {{ variant.title | escape }}
+              {%- if variant.available == false %} — {{ 'products.product.sold_out' | t }}{% endif %}
+              — {{ variant.price | money | strip_html }}
+            </option>
+          {%- endfor -%}
+        </select>
+      </div>
+    </div>
+  {%- endif -%}
+{%- endcapture -%}
+
+<div class="product-section">
+  <div class="container">
+    <div class="product-section__inner">
+      <product-details
+        data-bis-modal="#ProductBISModal"
+        data-url="{{ product.url }}"
+        data-section="{{ section.id }}"
+        class="product-section__details{% if is_sold_out %} product-section__details--soldout{% endif %}"
+      >
+        <div class="product-section__bradcrumbs">
+          {%- render 'breadcrumbs', visible: true -%}
+        </div>
+        <span data-dynamic="badge">
+          {%- if product_badge != blank -%}
+            <span
+              class="product-section__badge"
+              {% if is_sold_out %}
+                data-sold-out
+              {% endif %}
+            >
+              {{- product_badge -}}
+            </span>
+          {%- endif -%}
+        </span>
+        <div class="product-section__header">
+          <h1 class="product-section__title">{{ product.title }} </h1>
+          <style>
+            .swym-button-bar.swym-wishlist-button-bar.swym-inject{
+              display: none !important;
+            }
+          </style>
+          <button
+            class="product-section__wishlist-btn product_{{ product.id }} swym-add-to-wishlist"
+            data-swaction="addToWishlist"
+            data-product-id="{{product.id | json}}"
+          ></button>
+        </div>
+        {% comment %}
+        <div id="timer">
+          <div id="hours"></div>
+          <div id="minutes"></div>
+          <div id="seconds"></div>
+        </div>
+{% endcomment %}
+        <span class="product-section__price" data-dynamic="price">
+          {%- render 'price', target: current_variant -%}
+        </span>
+        {%- form 'product', product, data-product-form: '' -%}
+          <div class="product-section__options">
+            {{ options_block_html }}
+
+            <script type="application/json">
+              {{ product.variants | json }}
+            </script>
+          </div>
+          {%- if section.settings.shipping_note != blank -%}
+            <div class="product-section__message">
+              {{ section.settings.shipping_note }}
+            </div>
+          {%- endif -%}
+          <div data-dynamic="coming-soon-message">
+            {%- if is_coming_soon and section.settings.coming_soon_message != blank -%}
+              <div class="product-section__message">
+                {{ section.settings.coming_soon_message }}
+              </div>
+            {%- endif -%}
+          </div>
+          {%- if is_coming_soon -%}
+            <div class="custom-klaviyo-form-wrapper">
+              {{ settings.klaviyo_coming_soon_email_code }}
+            </div>
+          {%- else -%}
+            <div class="product-section__add-to-cart" data-dynamic="action-buttons">
+              {%- assign bis_text = 'products.product.notify_me' | t -%}
+              {%- comment -%}
+                {%- if is_coming_soon_notify -%}
+                  {%- assign bis_text = 'products.product.coming_soon_notify_me' | t -%}
+                {%- endif -%}
+              {%- endcomment -%}
+              <button
+                type="submit"
+                name="add"
+                class="button-1 button-1--black"
+                {% if is_sold_out %}
+                  disabled
+                {% endif %}
+              >
+                {%- if is_sold_out -%}
+                  {{ 'products.product.sold_out' | t }}
+                {%- else -%}
+                  {{ 'products.product.add_to_cart' | t }}
+                {%- endif -%}
+              </button>
+              {%- if show_bis_button -%}
+                <modal-opener data-modal="#ProductBISModal">
+                  <a href="#" class="button-1 button-1--alt" type="button">{{ bis_text }}</a>
+                </modal-opener>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+          {%- unless is_coming_soon -%}
+            {%- render 'payment-terms', form: form -%}
+          {%- endunless -%}
+        {%- endform -%}
+        {%- assign product_description = product.description -%}
+        <!-- TODO: Apply RTE -->
+        <div class="product-section__accordions">
+          {%- if product_description != blank -%}
+            <accordion-block class="product-details__accordion">
+              <details open>
+                <summary>{{ 'products.product.description' | t }}</summary>
+                <div>
+                  {%- render 'rte-content', content: product_description -%}
+                </div>
+              </details>
+            </accordion-block>
+          {%- endif -%}
+          {%- assign tab_titles = product.metafields.accentuate.tab_title -%}
+          {%- assign tab_contents = product.metafields.accentuate.tab_content -%}
+          {%- for tab_title in tab_titles -%}
+            {%- assign tab_content = tab_contents[forloop.index0] -%}
+            {%- if tab_content != blank -%}
+              <accordion-block class="product-details__accordion">
+                <details>
+                  <summary>{{ tab_title }}</summary>
+                  <div>
+                    {%- render 'rte-content', content: tab_content -%}
+                  </div>
+                </details>
+              </accordion-block>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </product-details>
+      <div class="product-section__gallery">
+        {%- assign media_size = product.media | size -%}
+        <div class="product-section__gallery-inner{% if media_size > 2 %} product-section__gallery-inner--scrollable{% endif %}">
+          <product-gallery
+            class="product-section__gallery-images{% if media_size > 2 %} product-section__gallery-images--scrollable{% endif %}"
+            data-swiper-wrapper="#ProductLightboxSwiper"
+          >
+            {%- liquid
+              assign media_alt = shop.name | append: ' - ' | append: product.title
+              assign swiper_slides_html = ''
+              assign swiper_navigation_html = ''
+              assign swiper_mobile_slides_html = ''
+              assign images_html = ''
+
+              if color_name != blank
+                assign media_alt = media_alt | append: ' - ' | append: color_name
+              endif
+            -%}
+            {%- for media in product.media -%}
+              {%- liquid
+                assign media_class = 'product-section__gallery-media'
+                if media_size < 2
+                  assign media_class = media_class | append: ' product-section__gallery-media--one-image'
+                endif
+                if media_size > 2
+                  assign media_class = media_class | append: ' product-section__gallery-media--scrollable'
+                endif
+                if media_size == 2
+                  assign media_class = media_class | append: ' product-section__gallery-media--full'
+                endif
+
+                if media.media_type == 'video' or media.media_type == 'external_video'
+                  assign media_class = media_class | append: ' product-section__gallery-media--video'
+                endif
+
+                if media.media_type == 'external_video'
+                  assign media_class = media_class | append: ' product-section__gallery-media--has-play'
+                endif
+              -%}
+
+              {%- capture swiper_slide_html -%}
+                <div class="product-section__lightbox-image swiper-slide">
+                  <div class="swiper-zoom-container">
+                    {%- render 'product-media',
+                      media: media,
+                      width: media.width,
+                      alt: media_alt,
+                      index: forloop.index0,
+                      video_controls: true
+                    -%}
+                  </div>
+                </div>
+              {%- endcapture -%}
+              {%- assign swiper_slides_html = swiper_slides_html | append: swiper_slide_html -%}
+
+              {%- capture swiper_navigation_item_html -%}
+                <div class="product-section__lightbox-thumb swiper-slide">
+                  {{-
+                    media.preview_image
+                    | image_url: width: 54, height: 74
+                    | image_tag: data-media: forloop.index0, alt: media_alt-
+                  }}
+                </div>
+              {%- endcapture -%}
+              {%- assign swiper_navigation_html = swiper_navigation_html | append: swiper_navigation_item_html -%}
+
+              {%- capture swiper_mobile_slide_html -%}
+                <modal-opener data-modal="#ModalDialogGallery" class="{{ media_class }} swiper-slide">
+                  {%- if media.media_type == 'image' or media.media_type == 'external_video' -%}
+                    {{-
+                      media
+                      | image_url: width: media.width
+                      | image_tag:
+                        width: 300,
+                        height: 400,
+                        class: 'product-section__gallery-media-tag',
+                        alt: media_alt,
+                        data-media: forloop.index0
+                    -}}
+                  {%- elsif media.media_type == 'video' -%}
+                    {%- render 'product-media',
+                      media: media,
+                      class: 'product-section__gallery-media-tag',
+                      video_autoplay: true,
+                      width: media.width,
+                      tag_width: 300,
+                      tag_height: 400,
+                      alt: media_alt,
+                      index: forloop.index0
+                    -%}
+                  {%- endif -%}
+                </modal-opener>
+              {%- endcapture -%}
+              {%- assign swiper_mobile_slides_html = swiper_mobile_slides_html | append: swiper_mobile_slide_html -%}
+
+              {%- capture image_html -%}
+                <modal-opener data-modal="#ModalDialogGallery" class="{{ media_class }} swiper-slide">
+                  {%- liquid
+                    assign media_tag_class = 'product-section__gallery-media-tag'
+                    if media_size < 2
+                      assign media_tag_class = media_tag_class | append: ' product-section__gallery-media-tag--one-image'
+                    endif
+
+                    if media.media_type == 'image' or media.media_type == 'external_video'
+                      echo media | image_url: width: media.width | image_tag: alt: media_alt, class: media_tag_class, data-media: forloop.index0
+                    elsif media.media_type == 'video'
+                      render 'product-media', media: media, class: media_tag_class, video_autoplay: true, video_controls: true, width: media.width, alt: media_alt, index: forloop.index0
+                    endif
+                  -%}
+                </modal-opener>
+              {%- endcapture -%}
+              {%- assign images_html = images_html | append: image_html -%}
+            {%- endfor -%}
+            <div data-swiper-prev class="swiper-button-prev">
+              {%- render 'icon-arrow-left' -%}
+            </div>
+            <div data-swiper-next class="swiper-button-next">
+              {%- render 'icon-arrow-left' -%}
+            </div>
+            <div data-swiper-mobile class="swiper product-section__mobile-swiper">
+              <div class="swiper-wrapper">
+                {{ swiper_mobile_slides_html }}
+              </div>
+              <div class="swiper-pagination"></div>
+            </div>
+            {{ images_html }}
+          </product-gallery>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{%- render 'stylesheet', name: 'modal-dialog', loading: 'defer' -%}
+{%- render 'stylesheet', name: 'product-section-lightbox', loading: 'defer' -%}
+
+<modal-dialog class="product-section__lightbox" id="ModalDialogGallery" data-modal-dialog>
+  <div data-modal-container class="product-section__lightbox-container">
+    <div id="ProductLightboxSwiper" data-modal-content class="product-section__lightbox-content">
+      <button type="button" class="product-section__lightbox-close" data-modal-close>
+        {%- render 'icon-close' -%}
+      </button>
+      <div class="product-section__lightbox-swiper{% if images.size <= 1 %} product-section__lightbox-swiper--one{% endif %}">
+        <div class="product-section__lightbox-swiper-pagination{% if images.size <= 1 %} product-section__lightbox-swiper-pagination--one{% endif %}">
+          <div data-swiper-prev class="swiper-button-prev">
+            {%- render 'icon-arrow-left' -%}
+          </div>
+          <div data-gallery-thumb class="swiper">
+            <div class="swiper-wrapper">
+              {{ swiper_navigation_html }}
+            </div>
+          </div>
+          <div data-swiper-next class="swiper-button-next">
+            {%- render 'icon-arrow-left' -%}
+          </div>
+        </div>
+        <div class="product-section__lightbox-swiper-wrapper">
+          <div data-swiper-prev class="swiper-button-prev">
+            {%- render 'icon-arrow-left' -%}
+          </div>
+          <div data-swiper class="swiper">
+            <div class="swiper-wrapper">
+              {{ swiper_slides_html }}
+            </div>
+          </div>
+          <div data-swiper-next class="swiper-button-next">
+            {%- render 'icon-arrow-left' -%}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</modal-dialog>
+
+{%- if size_chart_html != blank -%}
+  <modal-dialog class="product-section__size-guide" id="ModalDialogSizeChart" data-modal-dialog data-modal-drawer>
+    <div data-modal-container>
+      <div data-modal-content>
+        <button type="button" class="product-section__size-guide-close" data-modal-close>
+          {%- render 'icon-close' -%}
+        </button>
+        <div data-modal-title class="product-section__size-guide-title">
+          {%- render 'italic-first-word', text: section.settings.size_guide_title -%}
+        </div>
+        {{ size_chart_html }}
+      </div>
+    </div>
+  </modal-dialog>
+{%- endif -%}
+
+{%- render 'stylesheet', name: 'backinstock-block', loading: 'defer' -%}
+<modal-dialog data-modal-dialog id="ProductBISModal">
+  <backinstock-block class="backinstock-block">
+    <div data-modal-container class="backinstock-block__container">
+      <div data-modal-content class="backinstock-block__content">
+        <button type="button" data-modal-close>
+          {%- render 'icon-close' -%}
+        </button>
+        <div data-modal-title class="backinstock-block__title">
+          {{ product.title }}
+        </div>
+        <div class="backinstock-block__subtitle">
+          {{ section.settings.klaviyo_modal_subtitle }}
+        </div>
+        <form loading method="post" action="/" class="backinstock-block__form">
+          <input name="a" value="{{ settings.klaviyo_id }}" type="hidden">
+          <input name="platform" value="shopify" type="hidden">
+
+          {%- if product.has_only_default_variant -%}
+            <input type="hidden" name="variant" value="{{ current_variant.id }}">
+          {%- else -%}
+            <div class="backinstock-block__form-item">
+              <select id="backinstock-variant" name="variant">
+                {%- assign product_variants = product.variants | where: 'available', false -%}
+                {%- for variant in product_variants -%}
+                  <option
+                    {% if variant == current_variant %}
+                      selected="selected"
+                    {% endif %}
+                    value="{{ variant.id }}"
+                  >
+                    {{ variant.title | escape }}
+                  </option>
+                {%- endfor -%}
+              </select>
+            </div>
+          {%- endif -%}
+
+          {%- if settings.klaviyo_newsletter_email_code != blank -%}
+            <div data-newsletter-form hidden>
+              {{ settings.klaviyo_newsletter_email_code }}
+            </div>
+          {%- endif -%}
+          <div class="backinstock-block__form-item">
+            <input
+              id="backinstock-email"
+              class="backinstock-block__form-field"
+              required
+              type="email"
+              name="email"
+              placeholder="{{ 'products.back_in_stock_modal.email' | t }}"
+            >
+            <label class="backinstock-block__form-label" for="backinstock-email">
+              {{- 'products.back_in_stock_modal.email' | t -}}
+            </label>
+          </div>
+          {%- if settings.klaviyo_newsletter_email_code != blank -%}
+            <div hidden class="backinstock-block__form-item backinstock-block__form-item--checkbox">
+              <input id="backinstock-add-list" class="visually-hidden" type="checkbox" name="subscribe">
+              <label for="backinstock-add-list">{{ 'products.back_in_stock_modal.add_list' | t }}</label>
+            </div>
+          {%- endif -%}
+          <button type="submit" class="button-1 button-1--black backinstock-block__button">
+            <span>{{ section.settings.klaviyo_modal_success }}</span>
+            <span>{{ 'products.back_in_stock_modal.notify_me' | t }}</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </backinstock-block>
+</modal-dialog>

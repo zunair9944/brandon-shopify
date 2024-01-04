@@ -1,0 +1,209 @@
+<script data-cfasync="false" type="text/javascript">if (typeof Shopify === "undefined") var Shopify = {}; Shopify.cart = {{ cart | json }};</script> 
+<div id="sca-fg-owl-carousel">
+  <div id="freegift_cart_container" class="sca-fg-cart-container" style="display: none;">
+    <div id="freegift_message" class="owl-carousel"></div>
+  </div> 
+  <div id="sca-fg-slider-cart" style="display: none;">
+    <div class="sca-fg-cart-title">
+      <strong>Select your free gift (s)</strong>
+    </div>
+    <div id="sca_freegift_list" class="owl-carousel"></div>
+  </div>
+</div>
+<div id="sca_fg_cart">
+{%- render 'stylesheet', name: 'cart-page' -%}
+{%- render 'stylesheet', name: 'cart-empty-message' -%}
+{%- render 'stylesheet', name: 'line-item' -%}
+{%- render 'stylesheet', name: 'cart-summary' -%}
+
+{%- liquid
+  assign empty_cart_button_url = settings.cart_empty_button_url
+  unless empty_cart_button_url
+    assign empty_cart_button_url = routes.root_url
+  endunless
+
+  assign cart_type = section.settings.cart_type
+-%}
+
+{%- if cart_type == 'mini' -%}
+  {%- render 'stylesheet', name: 'mini-cart' -%}
+  {%- render 'tag-script', name: 'mini-cart', loading: 'defer' -%}
+{%- endif -%}
+
+{%- capture cart_empty_state -%}
+  <div class="cart-page__empty-state">
+    <div class="cart-empty-message">
+      {%- if settings.cart_empty_message != blank -%}
+        <div class="cart-empty-message__text">
+          {{ settings.cart_empty_message | escape }}
+        </div>
+      {%- endif -%}
+      {%- if settings.cart_empty_button_label != blank -%}
+        <a class="button-1 button-1--black cart-empty-message__button" href="{{ empty_cart_button_url }}">
+          {{ settings.cart_empty_button_label | escape }}
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+{%- endcapture -%}
+
+{%- capture cart_content -%}
+  <div 
+    class="
+      cart-page
+      {% if cart_type == 'mini' %}mini-cart{% endif %}
+    " 
+    data-ajax-cart-section
+  >
+    <div class="cart-page__header">
+      <div>
+        <h1 class="cart-page__title h3">{{ 'templates.cart.bag' | t }}</h1>
+        <span class="cart-page__title-qty h3">({{ cart.item_count }})</span>
+      </div>
+
+      {%- if cart_type == 'default' and cart.item_count == 0 -%}
+          {{ cart_empty_state }}
+      {%- endif -%}
+
+      {%- if cart_type == 'mini' -%}
+        <button 
+          class="mini-cart__close" 
+          type="button"
+          data-ajax-cart-static-element="close-minicart"
+        >{%- render 'icon-close' -%}</button>
+      {%- endif -%}
+    </div>
+      <div class="cart-page__content">
+        {%- if cart.item_count > 0 -%}
+          <div class="cart-page__line-items-list">
+            {%- for line_item in cart.items -%}
+              <div class="cart-page__line-item">
+                {%- render 'line-item', line_item: line_item, is_expanding: true -%}
+              </div>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+
+        {%- if cart_type == 'mini' and cart.item_count == 0 -%}
+          {{ cart_empty_state }}
+        {%- endif -%}
+
+        {%- if cart.item_count > 0 -%}
+          <div class="cart-page__summary-container">
+            <div data-tbnadfield='GIFT_PICKER' data-tbnadhide='NO_GIFTS' data-tbnaddefault=''></div>          
+            <div class="cart-summary cart-summary--expanding">
+              <div class="cart-summary__message">
+                {{- 'templates.cart.shipping_taxes_at_checkout' | t -}}
+              </div>
+              <div class="cart-summary__totals">
+                {%- if cart.cart_level_discount_applications.size > 0 -%}
+                  <div class="cart-summary__totals-row">
+                    {%- for discount in cart.cart_level_discount_applications -%}
+                      <div class="cart-summary__totals-prop">
+                        {{- discount.title | escape -}}
+                      </div>
+                      <div class="cart-summary__totals-money">
+                        -
+                        {{- discount.total_allocated_amount | money -}}
+                      </div>
+                    {%- endfor -%}
+                  </div>
+                {%- endif -%}
+
+                <div class="cart-summary__totals-row">
+                  <div class="cart-summary__totals-prop">
+                    {{- 'templates.cart.subtotal' | t -}}
+                  </div>
+                  <div class="cart-summary__totals-money cart-summary__totals-money--featured">
+                    {{- cart.items_subtotal_price | money -}}
+                  </div>
+                </div>
+                {%- comment -%}
+                  <div class="cart-summary__totals-row">
+                    <div class="cart-summary__totals-prop">
+                      {{- 'templates.cart.total' | t -}}
+                    </div>
+                    <div class="cart-summary__totals-money cart-summary__totals-money--featured">
+                      {{- cart.total_price | money -}}
+                    </div>
+
+                    <div class="cart-summary__totals-money cart-summary__totals-money--featured">
+                      {{- cart.total_price | money -}}
+                    </div>
+                  </div>
+                {%- endcomment -%}
+              </div>
+
+              {%- if cart_type == 'default' -%}
+                <div class="cart-summary__checkout-block">
+                  {%- if settings.cart_checkout_agreement != blank -%}
+                    <input type="checkbox" id="cart-summary__checkout-checkbox--{{ section.id }}" hidden>
+                    <label class="cart-summary__checkout-agreement" for="cart-summary__checkout-checkbox--{{ section.id }}">
+                      {{- settings.cart_checkout_agreement -}}
+                    </label>
+                  {%- endif -%}
+                  {%- form "cart", cart -%}
+                      <button
+                        tabindex="-1"
+                        type="submit"
+                        class="cart-summary__checkout-button button-1 button-1--black"
+                        name="checkout"
+                      >
+                        {{ 'templates.cart.checkout' | t }}
+                      </button>
+                      <div class="cart-summary__payment-terms">
+                        {%- render "payment-terms", form: form -%}
+                      </div>
+                  {%- endform -%}
+                </div>
+              {%- elsif cart_type == 'mini' -%}
+                <a href="{{ routes.cart_url }}" class="cart-summary__checkout-button button-1 button-1--black">
+                  {{ 'templates.cart.view_cart' | t }}
+                </a>
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endif -%}
+      </div>
+  </div>
+  
+  {%- if cart_type == 'mini' -%}
+    <button class="mini-cart__close--overlay" type="button"></button>
+  {%- endif -%}
+{%- endcapture -%}
+
+{%- if cart_type == 'mini' -%}
+  <div class="mini-cart-box">
+    {{ cart_content }}
+  </div>
+{%- else -%}
+  {{ cart_content }}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Cart",
+  "tag": "section",
+  "class": "section-cart",
+  "settings": [
+    {
+      "type": "select",
+      "id": "cart_type",
+      "label": "Cart type",
+      "options": [
+        {
+          "value": "default",
+          "label": "Default"
+        },
+        {
+          "value": "mini",
+          "label": "Mini"
+        }
+      ],
+      "default": "default"
+    }
+  ]
+}
+{% endschema %}
+
+</div>

@@ -1,0 +1,16 @@
+{% comment %}
+  Renders a price of a product or variant
+
+  Accepts:
+  - target: {Object} Product or Variant Liquid object
+
+  Usage:
+  {% render 'price', target: product %}
+  {% render 'price', target: variant %}
+{% endcomment %}
+
+{%- if target.compare_at_price > target.price -%}
+  <s>{{ target.compare_at_price | money }}</s> <b>{{ target.price | money }}</b>
+{%- else -%}
+  <span>{{ target.price | money }}</span>
+{% endif %}

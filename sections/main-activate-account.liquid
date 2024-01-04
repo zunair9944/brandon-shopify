@@ -1,0 +1,77 @@
+{%- render 'stylesheet', name: 'form' -%}
+
+<div class="account-form">
+  <div class="form__image-wrapper" data-target="desktop">
+    {{  settings.form_image.src | image_url: width: 960, height: 720 | image_tag: class: "form__image", alt: settings.form_image.alt }}
+  </div>
+  <div class="form__fields-wrapper" id="login-form">
+    <account-form>
+      {%- form 'activate_customer_password' , class: 'form' -%}
+        <div class="form__text--wrapper">
+          <h1 class="form__title">
+            {%- assign heading = 'templates.account_form.account_activate_account_title' | t -%}
+            {%- render 'italic-first-word', text: heading -%}
+          </h1>
+          <p class="form__instruction activate-instruction">
+            {{ 'templates.account_form.account_activate_account_intro' | t }}
+          </p>
+        </div>
+        <div class="input-wrapper">
+          <input
+            required
+            type="password"
+            data-input-type="password"
+            {%- if form.errors -%} 
+              aria-invalid="true"
+            {%- endif -%}
+            id="customer_password"
+            name="customer[password]"
+            class="customer__input"
+          >
+          <label for="customer_password">{{ 'templates.account_form.account_reset_pwd_newpwd' | t }}</label>
+        </div>
+        <div class="input-wrapper">
+          <input
+            required
+            type="password"
+            data-input-type="password"
+            id="customer_confirmpassword"
+            {%- if form.errors -%} 
+              aria-invalid="true"
+            {%- endif -%}
+            name="customer[password_confirmation]"
+            class="customer__input"
+          >
+          <label for="customer_confirmpassword">{{ 'templates.account_form.account_reset_pwd_confirmpwd' | t }}</label>
+        </div>
+        <div class="password__match-error">
+          {% render 'icon-alert' %}
+          {{ 'templates.account_form.account_form_errors.pasword_confirm_error' | t }}
+        </div>
+        <p class="account__password-requirements">{{ 'templates.account_form.account_password_requirements' | t }}</p>
+        {%- if form.errors -%}
+          <div class="form-error--default reset-pwd-error">
+            {% render 'icon-alert' %}
+            {{ form.errors | default_errors }}
+          </div>
+        {%- endif -%}
+        <button class="customer__formbtn" disabled type="submit" data-btn-type="activate">
+          {{ "templates.account_form.account_reset_pwd_title" | t }}
+        </button>
+        <a id="cancel" class="form__options link-hover" href="{{ shop.url }}">
+          {{- "templates.account_form.account_forgot_pwd_cancel" | t -}}
+        </a>
+      {%- endform -%}
+    </account-form>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Activate Account",
+  "tag": "section",
+  "class": "section-activate-account",
+  "settings": [],
+  "blocks": []
+}
+{% endschema %}

@@ -1,0 +1,270 @@
+{%- render 'stylesheet', name: 'boost-pfs-search-avex-override' -%}
+{%- render 'tag-script', name: 'search', loading: 'defer' -%}
+{%- render 'stylesheet', name: 'header' -%}
+{%- render 'tag-script', name: 'header', loading: 'defer' -%}
+
+{%- liquid
+  assign items_color_desktop = section.settings.items_color_desktop
+  assign items_color_mobile = section.settings.items_color_mobile
+  assign blocks = section.blocks
+
+  assign menu_items = blocks | where: 'type', 'menu_item'
+-%}
+
+{%- capture site_logo -%}
+  <a href="{{ shop.url }}" class="section-header__logo-link">
+    {%- if settings.logo_light_bg_svg != blank -%}
+      <span class="section-header__logo-image section-header__logo-image--light">{{ settings.logo_light_bg_svg }}</span>
+    {%- elsif settings.logo_light_bg -%}
+      <img src="{{ settings.logo_light_bg | image_url: height: 24 }}" class="section-header__logo-image section-header__logo-image--light" loading="lazy" />
+    {%- endif -%}
+    
+    {%- if settings.logo_dark_bg_svg != blank -%}
+      <span class="section-header__logo-image section-header__logo-image--dark">{{ settings. logo_dark_bg_svg }}</span>
+    {%- elsif settings.logo_dark_bg -%}
+      <img src="{{ settings.logo_dark_bg | image_url: height: 24 }}" class="section-header__logo-image section-header__logo-image--dark" loading="lazy" />
+    {%- endif -%}
+    <span class="site-name visually-hidden">{{ shop.name }}</span>
+  </a>
+{%- endcapture -%}
+
+<div 
+  class="section-header__content" 
+  data-items-color-desktop="{{ items_color_desktop }}" 
+  data-items-color-mobile="{{ items_color_mobile }}" 
+  data-target="desktop"
+>
+  <div class="section-header__content-item">
+    {% render 
+      'header-menu' with 
+      menu_items: menu_items,
+      list_name: 'main',
+      target: 'desktop'
+    %}
+  </div>
+
+  <div class="section-header__content-item">
+    {%- if settings.logo_light_bg or settings.logo_dark_bg -%}
+      {%- if template.name == 'index' -%}
+        <h1 class="section-header__logo-box">{{- site_logo -}}</h1>
+      {%- else -%}
+        <div class="section-header__logo-box">{{- site_logo -}}</div>
+      {%- endif -%}
+    {%- endif -%}
+  </div>
+
+  <div class="section-header__content-item">
+    <ul class="list section-header__list" data-list="secondary">
+      <li 
+        class="section-header__list-item" 
+        data-name="cart"
+      >
+        <a 
+          class="section-header__list-item-link" 
+          href="{{ routes.cart_url }}"
+          
+        >
+          {{ 'templates.cart.bag' | t }}<span class="section-header__cart-total-items" data-ajax-cart-bind-state="cart.item_count">{{ cart.item_count }}</span>
+        </a>
+      </li>
+
+      <li class="section-header__list-item" data-name="account">
+        <a class="section-header__list-item-link" href="{{ routes.account_url }}">{{ 'templates.account.account' | t }}</a>
+      </li>
+
+      <li class="section-header__list-item" data-name="search">
+        <a class="section-header__list-item-link" href="{{ routes.search_url }}">{{ 'templates.search.search' | t }}</a>
+        {%- render 'boost-search-widget' -%}
+      </li>
+
+      <li class="section-header__list-item" data-name="currency-switcher">
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div 
+  class="section-header__content" 
+  data-items-color-desktop="{{ items_color_desktop }}" 
+  data-items-color-mobile="{{ items_color_mobile }}" 
+  data-target="mobile"
+>
+
+  <div class="section-header__content-item">
+    <ul class="list section-header__list" data-list="main">
+      <li class="section-header__list-item">
+        <button 
+          class="section-header__list-item-link" 
+          type="button"
+          data-purpose="nav-toggler"
+        >
+          <span class="section-header__list-item-link-icon" data-show-while="closed">{%- render 'icon-burger' -%}</span>
+          <span class="section-header__list-item-link-icon" data-show-while="opened">{%- render 'icon-close' -%}</span>
+        </button>
+        
+        <div class="section-header__list-box">
+          {% render 
+            'header-menu' with 
+            menu_items: menu_items,
+            list_name: 'menu',
+            target: 'mobile'
+          %}
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="section-header__content-item">
+    {%- if settings.logo_light_bg or settings.logo_dark_bg -%}
+      {%- if template.name == 'index' -%}
+        <h1 class="section-header__logo-box">{{- site_logo -}}</h1>
+      {%- else -%}
+        <div class="section-header__logo-box">{{- site_logo -}}</div>
+      {%- endif -%}
+    {%- endif -%}
+  </div>
+
+  <div class="section-header__content-item">
+    <ul class="list section-header__list" data-list="secondary">
+      <li 
+        class="section-header__list-item" 
+        data-name="cart"
+      >
+        <a 
+          class="section-header__list-item-link" 
+          href="{{ routes.cart_url }}" 
+          title="{{ 'templates.cart.bag' | t }}"
+          
+        >
+          <span class="section-header__list-item-link-icon">{%- render 'icon-bag' -%}</span>
+          <span class="section-header__cart-total-items" data-ajax-cart-bind-state="cart.item_count">{{ cart.item_count }}</span>
+        </a>
+      </li>
+
+      <li class="section-header__list-item" data-name="search">
+        <a class="section-header__list-item-link" href="{{ routes.search_url }}" title="{{ 'templates.search.search' | t }}">
+          <span class="section-header__list-item-link-icon">{%- render 'icon-search' -%}</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+{% if request.page_type == 'index' %}
+  {% assign potential_action_target = shop.url | append: routes.search_url | append: "?q={search_term_string}" %}
+  <script type="application/ld+json">
+    {
+      "@context": "http://schema.org",
+      "@type": "WebSite",
+      "name": {{ shop.name | json }},
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {{ potential_action_target | json }},
+        "query-input": "required name=search_term_string"
+      },
+      "url": {{ shop.url | append: page.url | json }}
+    }
+  </script>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Header",
+  "class": "section-header",
+  "settings": [
+    {
+      "type": "select",
+      "id": "items_color_desktop",
+      "label": "Items color desktop",
+      "options": [
+        {
+          "value": "white",
+          "label": "White"
+        },
+        {
+          "value": "black",
+          "label": "Black"
+        }
+      ],
+      "default": "white"
+    },
+    {
+      "type": "select",
+      "id": "items_color_mobile",
+      "label": "Items color mobile",
+      "options": [
+        {
+          "value": "white",
+          "label": "White"
+        },
+        {
+          "value": "black",
+          "label": "Black"
+        }
+      ],
+      "default": "white"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "menu_item",
+      "name": "Menu item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        },
+        {
+          "type": "link_list",
+          "id": "submenu",
+          "label": "Submenu"
+        },
+        {
+          "type": "header",
+          "content": "Image #1"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_1",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "image_1_title",
+          "label": "Title"
+        },
+        {
+          "type": "url",
+          "id": "image_1_link",
+          "label": "Link"
+        },
+        {
+          "type": "header",
+          "content": "Image #2"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_2",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "image_2_title",
+          "label": "Title"
+        },
+        {
+          "type": "url",
+          "id": "image_2_link",
+          "label": "Link"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

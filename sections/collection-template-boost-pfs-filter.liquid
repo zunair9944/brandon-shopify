@@ -1,0 +1,142 @@
+{%- render 'stylesheet', name: 'product-card' -%}
+{%- render 'stylesheet', name: 'boost-pfs-avex-override' -%}
+{%- render 'stylesheet', name: 'rte' -%}
+{%- render 'stylesheet', name: 'collection' -%}
+{%- render 'tag-script', name: 'collection', loading: 'defer' -%}
+
+{%- liquid
+  assign title = collection.title | escape
+  assign description = collection.description
+  assign image = collection.image
+  assign collection_has_products = true
+  
+  if collection.products_count == 0
+    assign collection_has_products = false
+  endif
+
+  assign tab_menu = section.settings.tab_menu
+  assign backup_collection = section.settings.backup_collection
+
+  assign feed_inline_image = collection.metafields.inline.image
+  if feed_inline_image != blank
+    assign feed_inline_image = feed_inline_image | image_url: height: 540
+  endif
+  assign feed_inline_image_title = collection.metafields.inline.title | escape
+  assign feed_inline_image_btn_label = collection.metafields.inline.label | escape
+  assign feed_inline_image_url = collection.metafields.inline.url | escape
+
+  assign is_all_products_page = false
+  if collection.handle == 'all'
+    assign is_all_products_page = true
+  endif
+-%}
+
+<script type="application/json" class="collection__data">
+  {
+    "t": {
+      "filters": "{{ 'templates.collection.filters' | t }}",
+      "sort": "{{ 'templates.collection.sort' | t }}",
+      "sold_out": "{{ 'products.labels.sold_out' | t }}",
+      "pre_order": "{{ 'products.labels.pre_order' | t }}",
+      "coming_soon": "{{ 'products.labels.coming_soon' | t }}"
+    }
+  }
+</script>
+
+<div 
+  class="collection__header"
+  data-has-image="{%- if image != blank -%} true {%- else -%} false {%- endif -%}"
+  data-has-description="{%- if description != blank -%} true {%- else -%} false {%- endif -%}"
+>
+  <div class="collection__copy">
+    {%- if title != blank -%}
+      <h1 class="collection__title">
+        {%- render 'italic-first-word', text: title -%}
+      </h1>
+    {%- endif -%}
+  
+    {%- if description != blank -%}
+      <div class="collection__description rte">{{ description }}</div>
+    {%- endif -%}
+  </div>
+  {%- if image != blank -%}
+    <div class="collection__image-box">
+      <img src="{{ image.src | image_url: width: 1920 }}" loading="lazy" class="collection__image" />
+    </div>
+  {%- endif -%}
+</div>
+{% comment %}
+{% if collection.handle == "brown" or collection.handle == "kendrick-trunks" %}
+ <div id="timer">
+   <div id="days"></div>
+          <div id="hours"></div>
+          <div id="minutes"></div>
+          <div id="seconds"></div>
+        </div>
+{% endif %}
+{% endcomment %}
+<div 
+  class="collection__content"
+  data-has-products="{{ collection_has_products }}"
+  data-feed-inline-image="{{ feed_inline_image }}"
+  data-feed-inline-image-title="{{ feed_inline_image_title }}"
+  data-feed-inline-image-btn-label="{{ feed_inline_image_btn_label }}"
+  data-feed-inline-image-btn-url="{{ feed_inline_image_url }}"
+>
+    {%- if is_all_products_page and tab_menu -%}
+      {%- render 'tab-menu' with
+        tab_menu: tab_menu 
+      -%}
+    {%- endif -%}
+    <div 
+      class="collection__content-pfs"
+      style="
+        --icon-plus-url: url('{{ 'icon-plus.svg' | asset_url }}');
+        --icon-minus-url: url('{{ 'icon-minus.svg' | asset_url }}');
+      "
+    >
+      {% render 'collection-template-boost-pfs-filter' %}
+    </div>
+
+  {%- if collection_has_products == false and backup_collection != blank -%}
+    <div class="collection__content-backup">
+      {%- liquid 
+        assign title = backup_collection.title
+        assign collection = backup_collection
+        assign footer_button_text = 'templates.collection.shop_all' | t
+        assign footer_button_link = routes.all_products_collection_url
+      -%}
+      
+      {%- 
+        render 'product-list' with
+        title: title,
+        collection: collection,
+        footer_button_text: footer_button_text,
+        footer_button_link: footer_button_link 
+      -%}
+    </div>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Collection PFS",
+  "tag": "section",
+  "class": "section-collection",
+  "settings": [
+    {
+      "type": "link_list",
+      "id": "tab_menu",
+      "label": "Tab menu",
+      "info": "Visible only on 'collections/all' page"
+    },
+    {
+      "type": "collection",
+      "id": "backup_collection",
+      "label": "Backup collection",
+      "info": "Visible only when initially requested collection is empty"
+    }
+  ],
+  "blocks": []
+}
+{% endschema %}

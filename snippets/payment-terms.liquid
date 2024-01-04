@@ -1,0 +1,26 @@
+{% comment %}
+  Renders a form terms
+
+  Accepts:
+  - form: {Object} Shopify form object
+
+  Usage:
+  {%- render 'payment-terms', form: form -%}
+{% endcomment %}
+
+{%- render "stylesheet", name: "payment-terms" -%}
+
+<div data-payment-terms class="payment-terms">
+  <styled-shadow-root data-style="style" data-host="shopify-payment-terms" class="payment-terms__item">
+    {%- liquid
+      style
+        render "css-product-shoppay.css"
+      endstyle
+
+      echo form | payment_terms
+    -%}
+  </styled-shadow-root>
+  <div class="payment-terms__item">
+    <div id="ProductKlarnaWidget" data-klarna-widget></div>
+  </div>
+</div>

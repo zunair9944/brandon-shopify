@@ -1,0 +1,23 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-cart",
+      "settings": {
+      }
+    },
+    "cart-recommendations": {
+      "type": "cart-recommendations",
+      "settings": {
+        "title": "You may also like",
+        "slider_is_enabled": true,
+        "collection": "coming-soon-2",
+        "footer_button_text": "Shop all",
+        "footer_button_link": "shopify:\/\/collections\/420-collection"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "cart-recommendations"
+  ]
+}

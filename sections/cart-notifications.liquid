@@ -1,0 +1,29 @@
+{%- render 'stylesheet', name: 'cart-notifications', loading: 'defer' -%}
+{%- render 'stylesheet', name: 'line-item', loading: 'defer' -%}
+
+<cart-notifications class="cart-notifications" style="display: none;">
+  <div class="cart-notifications__message">
+    {{- 'templates.cart.item_added_to_cart' | t -}}
+  </div>
+  <div class="cart-notifications__items" data-cart-notifications-items></div>
+  <div data-tbnadfield='GIFT_PICKER' data-tbnadhide='NO_GIFTS' data-tbnaddefault=''></div>
+  <a href="{{ routes.cart_url }}" class="button-1 button-1--black">
+    {{- 'templates.cart.view_cart' | t -}}
+  </a>
+
+  <div data-ajax-cart-section hidden>
+    {%- for line_item in cart.items -%}
+      {%- render 'line-item', line_item: line_item, hide_controls: true -%}
+    {%- endfor -%}
+  </div>
+
+  <button type="button" class="cart-notifications__close-button" data-cart-notifications-close-button>
+    <img class="cart-notifications__close-icon" src="{{ 'icon-close.svg' | asset_url }}" loading="lazy" alt="">
+  </button>
+</cart-notifications>
+
+{% schema %}
+{
+  "name": "Cart notifications"
+}
+{% endschema %}

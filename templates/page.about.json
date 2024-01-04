@@ -1,0 +1,69 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-about",
+      "blocks": {
+        "e872ea75-77d8-498e-be97-23c5004e6a6b": {
+          "type": "block_title",
+          "settings": {
+            "block_title": "Our brand"
+          }
+        },
+        "ca24a691-ca94-4896-8e1d-9aaf4792db19": {
+          "type": "block_content",
+          "settings": {
+            "block_content": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque congue dapibus enim, elementum faucibus. Id lectus dolor sit amet, leo cursus. Odio vitae eu, sed massa aliquam in. Massa mattis orci, purus amet ornare eleifend mattis fames sit. Gravida curabitur quis consequat sed. Faucibus cras amet tellus phasellus orci id venenatis, et. Ullamcorper nullam nibh ultricies suspendisse vitae. Hendrerit habitant porta id mauris ut. Quis ut sed amet elementum ullamcorper nulla.<\/p>"
+          }
+        },
+        "e28b598f-67be-40b8-af29-6afbc914bb9a": {
+          "type": "block_image",
+          "settings": {
+            "section_image_1": "shopify:\/\/shop_images\/24844db1f022bd72e8a660f753805847_1.jpg"
+          }
+        },
+        "d80c6bb5-6897-498f-af89-c278b650cd55": {
+          "type": "block_title",
+          "settings": {
+            "block_title": "Our value"
+          }
+        },
+        "a77ea98c-9d0e-4791-92dc-4d581a947bcb": {
+          "type": "block_content",
+          "settings": {
+            "block_content": "<p>Ac, ac fermentum enim fermentum purus. Ornare erat suscipit feugiat ac sit neque dignissim sagittis, fusce. Urna consequat nisi vitae tortor mauris. Id eget non sed nulla nunc. Odio eget gravida fermentum orci auctor id. Facilisis sit tempus posuere venenatis nulla at. Bibendum lorem porta ut magnis nisl, sed non duis. Quis mauris at ridiculus felis tincidunt eu nullam est. Mollis lacus, scelerisque ipsum augue nunc morbi cursus tincidunt vitae. Phasellus eu mi condimentum facilisi dui.<\/p>"
+          }
+        },
+        "8569e2f1-99f5-4efb-9cbd-88d724b0d22a": {
+          "type": "block_image",
+          "settings": {
+            "section_image_1": "shopify:\/\/shop_images\/bce12b34ca764635c7ba0196b87b3d30.jpg",
+            "section_image_2": "shopify:\/\/shop_images\/f5482add6743c3fa78811afef985ccf1.jpg"
+          }
+        },
+        "9de9c25d-f0e0-4ee5-a9b5-d98978591275": {
+          "type": "block_blockquote",
+          "settings": {
+            "section_blockquote": "“Lorem ipsum dolor sit amet consectetur adipiscing elit.”",
+            "section_citation": "brandon blackwood"
+          }
+        }
+      },
+      "block_order": [
+        "e872ea75-77d8-498e-be97-23c5004e6a6b",
+        "ca24a691-ca94-4896-8e1d-9aaf4792db19",
+        "e28b598f-67be-40b8-af29-6afbc914bb9a",
+        "d80c6bb5-6897-498f-af89-c278b650cd55",
+        "a77ea98c-9d0e-4791-92dc-4d581a947bcb",
+        "8569e2f1-99f5-4efb-9cbd-88d724b0d22a",
+        "9de9c25d-f0e0-4ee5-a9b5-d98978591275"
+      ],
+      "settings": {
+        "video_url": "https:\/\/www.pexels.com\/video\/3571264\/download\/?fps=29.97&h=720&w=1280",
+        "video_poster": "shopify:\/\/shop_images\/BLACKWOOD_30_v10_FINAL_FOR_WEB_1.png"
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

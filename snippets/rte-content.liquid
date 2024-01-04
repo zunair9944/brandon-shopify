@@ -1,0 +1,15 @@
+{% comment %}
+  Renders rte content
+
+  Accepts:
+  - target: {String} HTML String
+
+  Usage:
+  {% render 'rte-content', content: content %}
+{% endcomment %}
+
+{% render 'stylesheet', name: 'rte' %}
+
+<rte-content class="rte">
+  {{ content }}
+</rte-content>

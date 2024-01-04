@@ -1,0 +1,282 @@
+{%- render 'stylesheet', name: 'banner' -%}
+
+{%- liquid
+  assign blocks = section.blocks
+
+  assign banner = section.settings
+  assign buttons = blocks | where: 'type', 'button'
+  assign total_buttons = buttons | size
+
+  assign video_url = banner.video_url
+  assign desktop_image = banner.desktop_image
+  assign mobile_image = banner.mobile_image
+  assign media_brightness = banner.media_brightness
+  assign eyebrow = banner.eyebrow | escape
+  assign heading = banner.heading | escape
+  assign text = banner.text | escape
+  assign toggle_mobile_text = banner.toggle_mobile_text
+  assign text_alignment = banner.text_alignment
+  assign content_box_alignment = banner.content_box_alignment
+  assign copy_color_desktop = banner.copy_color_desktop
+  assign copy_color_mobile = banner.copy_color_mobile
+-%}
+
+<div
+  class="banner" 
+  data-text-alignment="{{ text_alignment }}"
+  data-content-box-alignment="{{ content_box_alignment }}"
+  data-copy-color-desktop="{{ copy_color_desktop }}"
+  data-copy-color-mobile="{{ copy_color_mobile }}"
+>
+  <div class="banner__copy">
+    {%- if eyebrow != blank -%}
+      <span class="banner__caption text-1">{{ eyebrow }}</span>
+    {%- endif -%}
+
+    {%- if heading != blank -%}
+      <h2 class="banner__heading">{%- render 'italic-first-word', text: heading -%}</h2>
+    {%- endif -%}
+
+    {%- if text != blank -%}
+    <span data-toggle-mobile-text="{{ toggle_mobile_text }}" class="banner__text">{{ text }}</span>
+    {%- endif -%}
+
+    {%- if total_buttons > 0 -%}
+      <ul class="list banner__buttons">
+        {%- for button_block in buttons -%}
+          {%- liquid
+            assign button = button_block.settings
+  
+            assign text = button.text | escape
+            assign link = button.link | escape
+          -%}
+  
+          {%- if text != blank -%}
+            <li>
+              <a 
+                href="{{ link }}" 
+                class="banner__button button-1"
+              >{{ text }}</a>
+            </li>
+          {%- endif -%}
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+  </div>
+
+  <div class="banner__image-box" style="--media-brightness: {{ media_brightness }}">
+    {%- if video_url != blank -%}
+        <video
+        class="banner__video"
+        crossorigin="anonymous"
+        autoplay
+        playsinline
+        muted
+        loop
+        preload="none"
+        type="video/mp4"
+        src="{{ video_url }}"
+        poster="{% if desktop_image != blank %}{{ desktop_image.src | image_url: width: 1920 }}{% elsif mobile_image != blank %}{{ mobile_image.src | image_url: width: 480 }}{% endif %}"
+      ></video>
+
+    {%- else -%}
+    
+      {%- if desktop_image != blank -%}
+        <img src="{{ desktop_image.src | image_url: width: 1920 }}" loading="lazy" class="banner_image banner_image--desktop" />
+      {%- endif -%}
+
+      {%- if mobile_image != blank -%}
+        <img src="{{ mobile_image.src | image_url: height: 960 }}" loading="lazy" class="banner_image banner_image--mobile" />
+      {%- endif -%}
+
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Banner",
+  "tag": "section",
+  "class": "section-banner",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Media"
+    },
+    {
+      "type": "image_picker",
+      "id": "desktop_image",
+      "label": "Desktop image"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_image",
+      "label": "Mobile image"
+    },
+    {
+      "type": "url",
+      "id": "video_url",
+      "label": "Video URL",
+      "info": "Video will replace the image on desktop/mobile"
+    },
+    {
+      "type": "range",
+      "id": "media_brightness",
+      "min": 0.1,
+      "max": 1,
+      "step": 0.1,
+      "label": "Media brightness",
+      "default": 1
+    },
+    {
+      "type": "header",
+      "content": "Copy"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Default eyebrow"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Default heading"
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Text body",
+      "default": "Sed ipsum orci, interdum cursus aliquam in, porttitor at turpis"
+    },
+    {
+      "type" : "checkbox",
+      "id" : "toggle_mobile_text",
+      "label" : "Hide banner text",
+      "default" : false
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "select",
+      "id": "content_box_alignment",
+      "label": "Content box alignment",
+      "options": [
+        {
+          "value": "top_left",
+          "label": "Top left"
+        },
+        {
+          "value": "top_center",
+          "label": "Top center"
+        },
+        {
+          "value": "top_right",
+          "label": "Top right"
+        },
+        {
+          "value": "center_left",
+          "label": "Center left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "center_right",
+          "label": "Center right"
+        },
+        {
+          "value": "bottom_left",
+          "label": "Bottom left"
+        },
+        {
+          "value": "bottom_center",
+          "label": "Bottom center"
+        },
+        {
+          "value": "bottom_right",
+          "label": "Bottom right"
+        }
+      ],
+      "default": "center_left"
+    },
+    {
+      "type": "select",
+      "id": "copy_color_desktop",
+      "label": "Color desktop",
+      "options": [
+        {
+          "value": "white",
+          "label": "White"
+        },
+        {
+          "value": "black",
+          "label": "Black"
+        }
+      ],
+      "default": "white"
+    },
+    {
+      "type": "select",
+      "id": "copy_color_mobile",
+      "label": "Color mobile",
+      "options": [
+        {
+          "value": "white",
+          "label": "White"
+        },
+        {
+          "value": "black",
+          "label": "Black"
+        }
+      ],
+      "default": "white"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "button",
+      "name": "CTA",
+      "limit": 2,
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Label",
+          "default": "Default CTA label"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Banner"
+    }
+  ]
+}
+{% endschema %}

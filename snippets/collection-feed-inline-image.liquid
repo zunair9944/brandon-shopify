@@ -1,0 +1,25 @@
+<div class="collection__feed-inline-image-box">
+  <div class="collection__feed-inline-image-content">
+    {%- if feed_inline_image_btn_url != blank -%}
+      <a href="{{ feed_inline_image_btn_url }}" class="collection__feed-inline-image-btn-url"></a>
+    {%- endif -%}
+    
+    <div class="collection__feed-inline-image-copy">
+      {%- if feed_inline_image_title != blank -%}
+        <span class="collection__feed-inline-image-title">{{ feed_inline_image_title }}</span>
+      {%- endif -%}
+      {%- if feed_inline_image_btn_label != blank -%}
+        <span class="collection__feed-inline-image-btn">
+          <span class="collection__feed-inline-image-btn-title text-1">{{ feed_inline_image_btn_label }}</span>
+          <span class="collection__feed-inline-image-btn-icon">
+            {%- render 'icon-right-long' -%}
+          </span>
+        </span>
+      {%- endif -%}
+    </div>
+  
+    {%- if feed_inline_image != blank -%}
+      {{ feed_inline_image | image_tag: preload: true, class: 'collection__feed-inline-image', loading: "lazy" }}
+    {%- endif -%}
+  </div>
+</div>

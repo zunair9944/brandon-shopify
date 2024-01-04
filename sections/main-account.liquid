@@ -1,0 +1,239 @@
+{%- render 'globale-orders-list' -%}
+{%- render 'stylesheet', name: 'account' -%}
+{%- render 'tag-script', name: 'account', loading: 'defer' -%}
+
+<div class="account">
+  {%- render 'account-banner',
+    account_banner_text: 'templates.account_dashboard.account_sidebar.account_sidebar_dash_t'
+  -%}
+  <div class="account__container">
+    {%- render 'account-sidebar' -%}
+    {%- render 'account-mobile-sidebar' -%}
+    <div class="account__content">
+      <div class="content__container" data-account-dashboard="only">
+        <div class="account__details">
+          <div class="details__item">
+            {%- render 'detail-header',
+              subtitle: 'templates.account_dashboard.account_content.account_dash_subtitle'
+            -%}
+            <h3 class="detail__title default-title">
+              {{ 'templates.account_dashboard.account_content.account_contact_title' | t }}
+            </h3>
+            {%- if customer -%}
+              <p class="detail__info">{{ customer.name }}</p>
+              <p class="detail__info mt-sm">{{ customer.email }}</p>
+            {%- endif -%}
+          </div> 
+          <div class="details__item">
+            {%- render 'detail-header',
+              subtitle: 'templates.account_dashboard.account_content.account_defaddress_subtitle'
+            -%}
+            <div class="mb-lg">
+              {%- if customer.default_address != blank -%}
+                <div class="address__formatter">
+                  {{ customer.default_address | format_address }}
+                </div> 
+                {%- if customer.default_address.phone != blank -%}
+                  <p class="detail__info">{{ customer.default_address.phone }}</p>
+                {%- endif -%}
+              {%- else -%}
+                <p class="detail__info">
+                  {{ 'templates.account_dashboard.account_content.account_nodefaultadd_msg' | t }}
+                </p>
+              {%- endif -%}
+            </div>
+            <a
+              href="{{ routes.account_addresses_url }}"
+              class="account__action-btn active__action-btn button-1 button-1--alt"
+            >
+              {{ 'templates.account_dashboard.account_content.account_viewedit_btn' | t }}
+            </a>
+          </div>
+          <div class="details__item">
+            {%- liquid
+              assign fixed_vip_price = section.settings.vip_status_number | default: 4500
+              assign user_vip_level = fixed_vip_price | times: 100 | minus: customer.total_spent | money
+              assign member_title = 'templates.account_dashboard.account_content.account_member_title' | t
+              assign member_info = 'templates.account_dashboard.account_content.account_vipstatus_indicator1' | t: user_vip_level: user_vip_level
+
+              if customer.tags contains 'VIP'
+                assign member_title = 'templates.account_dashboard.account_content.account_vipstatus' | t
+                assign member_info = 'templates.account_dashboard.account_content.account_vipstatus_indicator3' | t
+              endif
+
+              render 'detail-header', subtitle: 'templates.account_dashboard.account_content.account_vips_subtitle'
+            -%} 
+            <b class="detail__title member-label">{{- member_title -}}</b>
+            <p class="detail__info secondary">{{- member_info -}}</p>
+            <p class="detail__info mt-lg">
+              {{ 'templates.account_dashboard.account_content.account_vipstatus_perk' | t }}
+            </p>
+            <ul class="a-info__collection">
+              {%- if settings.vip_instruction_one != blank -%}
+                <li class="info__item detail__info">
+                  {%- render 'icon-tick' -%}
+                  <p>{{ settings.vip_instruction_one }}</p>
+                </li>
+              {%- endif -%}
+              {%- if settings.vip_instruction_two != blank -%}
+                <li class="info__item detail__info">
+                  {%- render 'icon-tick' -%}
+                  <p>{{ settings.vip_instruction_two }}</p>
+                </li>
+              {%- endif -%}
+            </ul>
+          </div>
+          <div class="details__item">
+            {%- render 'detail-header',
+              subtitle: 'templates.account_dashboard.account_content.account_newsl_subtitle'
+            -%}
+            {%- if customer.accepts_marketing == true -%}
+              <a
+                href="https://manage.kmail-lists.com/subscriptions/unsubscribe?a={{ settings.klaviyo_id }}&g={{ section.settings.newsletter_code }}&email={{customer.email}}"
+                class="account__action-btn active__action-btn button-1 button-1--alt"
+              >
+                {{ 'templates.account_dashboard.account_content.account_subscription_edit' | t }}
+              </a>
+            {%- else -%}
+              <a
+                href="https://manage.kmail-lists.com/subscriptions/subscribe?a={{ settings.klaviyo_id }}&g={{ section.settings.newsletter_code }}&email={{customer.email}}"
+                class="account__action-btn active__action-btn button-1 button-1--alt"
+              >
+                {{ 'templates.account_dashboard.account_content.account_subscription_subscribe' | t }}
+              </a>
+            {%- endif -%} 
+          </div>
+        </div>
+        <div class="account__orders">
+          {%- if customer.orders_count > 0 -%}
+            <b class="detail__title">{{ 'templates.account_dashboard.account_content.account_orders_title' | t }}</b>
+            <table id="orders-table" class="orders__table" data-table="desktop">
+              <thead>
+                <tr class="table__header-row" data-table="account">
+                  <th class="table__header-item">
+                    {{ 'templates.account_dashboard.account_content.account_thead1' | t | append: '#' }}
+                  </th>
+                  <th class="table__header-item">
+                    {{ 'templates.account_dashboard.account_content.account_thead2' | t }}
+                  </th>
+                  <th class="table__header-item">
+                    {{ 'templates.account_dashboard.account_content.account_thead3' | t }}
+                  </th>
+                  <th class="table__header-item">
+                    {{ 'templates.account_dashboard.account_content.account_thead4' | t }}
+                  </th>
+                  <th class="table__header-item">
+                    {{ 'templates.account_dashboard.account_content.account_thead5' | t }}
+                  </th>
+                </tr>
+              </thead>
+              {% paginate customer.orders by 6 %}
+                <tbody class="table__body">
+                  {% for order in customer.orders %}
+                    <tr class="table__body-row" data-table="account">
+                      <td class="table__body-item">
+                        <a href="{{ order.customer_url }}">
+                          {{- order.order_number | prepend: '#' -}}
+                        </a>
+                      </td>
+                      <td class="table__body-item">{{ order.created_at | date: '%B %d, %Y' }}</td>
+                      <td class="table__body-item">{{ order.financial_status_label }}</td>
+                      <td class="table__body-item">{{ order.fulfillment_status | capitalize }}</td>
+                      <td class="table__body-item">{{ order.total_price | money }}</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td colspan="5">
+                      <div class="account__pagination">
+                        {%- render 'pagination', paginate: paginate -%}
+                      </div>
+                    </td>
+                  </tr>
+                </tfoot>
+              {% endpaginate %}
+            </table>
+            <table id="orders-table" class="orders__table" data-table="mobile">
+              {% paginate customer.orders by 6 %}
+                <tbody>
+                  {% for order in customer.orders %}
+                    <tr class="table-row">
+                      <td>
+                        <tr class="table-cell-row">
+                          <td class="cell-first-line">
+                            {{ 'templates.account_dashboard.account_content.account_thead1' | t | append: '#' }}
+                          </td>
+                          <td class="cell-first-line">
+                            <a href="{{ order.customer_url }}">
+                              {{- order.order_number | prepend: '#' -}}
+                            </a>
+                          </td>
+                        </tr>
+                        <tr class="table-cell-row">
+                          <td>{{ 'templates.account_dashboard.account_content.account_thead2' | t }}</td>
+                          <td>{{ order.created_at | date: '%B %d, %Y' }}</td>
+                        </tr>
+                        <tr class="table-cell-row">
+                          <td>{{ 'templates.account_dashboard.account_content.account_thead3' | t }}</td>
+                          <td>{{ order.financial_status_label }}</td>
+                        </tr>
+                        <tr class="table-cell-row">
+                          <td>{{ 'templates.account_dashboard.account_content.account_thead4' | t }}</td>
+                          <td>{{ order.fulfillment_status | capitalize }}</td>
+                        </tr>
+                        <tr class="table-cell-row">
+                          <td class="cell-last-line">
+                            {{ 'templates.account_dashboard.account_content.account_thead5' | t }}
+                          </td>
+                          <td class="cell-last-line">{{ order.total_price | money }}</td>
+                        </tr>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td colspan="5">
+                      <div class="account__pagination mt-2xl">
+                        {%- render 'pagination', paginate: paginate -%}
+                      </div>
+                    </td>
+                  </tr>
+                </tfoot>
+              {% endpaginate %}
+            </table>
+          {%- else -%}
+            {%- render 'detail-header', subtitle: 'templates.account_dashboard.account_content.account_orders_title' | t -%}
+            <p class="detail__info mt-xlg">
+              {{ 'templates.account_dashboard.account_content.account_noorders_indicator' | t }}
+            </p>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Account",
+  "tag": "section",
+  "class": "section-account",
+  "settings": [
+    {
+      "type": "text",
+      "label": "VIP status amount",
+      "id": "vip_status_number",
+      "default": "4500"
+    },
+    {
+     "type": "text",
+     "label" : "Newsletter code",
+     "id" : "newsletter_code",
+     "default" : "XDrYsS"
+    }
+  ],
+  "blocks": []
+}
+{% endschema %}

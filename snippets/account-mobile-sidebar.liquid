@@ -1,0 +1,78 @@
+{%- render 'stylesheet', name: 'account-sidebar' -%}
+
+<div class="account-sidebar-dropdown">
+  <div class="dropdown--wrapper">
+    <div class="sidebar__dropdown">
+      <p id="current-active-route" class="current-active-link">
+        <span class="sidebar-main-link"></span>{% render 'icon-bottom-chevron' %}
+      </p>
+      <ul class="sidebar__mobile-list">
+        <li class="mobile__list-item">
+          <a href="{{ routes.account_url }}">
+            {{- 'templates.account_dashboard.account_sidebar.account_sidebar_dash_t' | t }}
+          </a>
+        </li>
+        <li class="mobile__list-item">
+          <a href="{{ routes.account_addresses_url }}">
+            {{- 'templates.account_dashboard.account_sidebar.account_sidebar_add_t' | t }}
+          </a>
+        </li>
+        <li class="mobile__list-item">
+          <a href="a/gc/gift-card/balance/">
+            {{- 'templates.account_dashboard.account_sidebar.account_sidebar_gift_t' | t }}
+          </a>
+        </li>
+        <li class="mobile__list-item">
+          <a href="/pages/swym-wishlist?originInstrument=12originInstrument=12">
+            {{- 'templates.account_dashboard.account_sidebar.account_sidebar_wish_t' | t }}
+          </a> 
+        </li>
+        <li class="mobile__list-item">
+          <a href="{{ routes.account_logout_url }}">
+            {{- 'templates.account_dashboard.account_sidebar.account_sidebar_log_t' | t }}
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script>
+
+  const dropdown = document.querySelector(".sidebar__dropdown");
+  const dropdownList = document.querySelector(".sidebar__mobile-list");
+  const sidebarMobileLinks = document.querySelectorAll('.mobile__list-item > a');
+  const activeLinkText = document.querySelector(".current-active-link > span");
+
+  dropdown.addEventListener('click', () => {
+    dropdown.classList.toggle("sidebar__mobile-list--active");
+    activeLinkText.classList.toggle("indicator")
+    document.querySelector(".current-active-link").classList.toggle("icon--active");
+    document.querySelector('.mobile__list-item a[aria-current="page"]')?.parentElement.classList.add("remove-indicator");
+  })
+
+  function removeActive(){
+    document.querySelector('.mobile__list-item a[aria-current="page"]')?.parentElement.classList.add("remove-indicator");
+
+  }
+
+  removeActive();
+
+  sidebarMobileLinks.forEach(link => {
+      link.removeAttribute('aria-current')
+      if(window.location.href == link.href){
+        link.setAttribute('aria-current', 'page');
+        activeLinkText.innerHTML = link.textContent;
+      }
+      else if (window.location.href.includes("orders") || window.location.href.includes("account?page") || window.location.pathname.split("/").length == 2){
+        sidebarLinks[0].setAttribute('aria-current', 'page')
+        sidebarMobileLinks[0].parentElement.classList.add("remove-indicator"); 
+        activeLinkText.innerHTML = sidebarLinks[0].textContent;
+      }
+      else if(window.location.href.includes("addresses")){
+        sidebarLinks[1].setAttribute('aria-current', 'page')
+        sidebarMobileLinks[1].parentElement.classList.add("remove-indicator");
+        activeLinkText.innerHTML = sidebarLinks[1].textContent;
+      }
+  })
+</script>

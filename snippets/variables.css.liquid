@@ -1,0 +1,46 @@
+{%- liquid
+  
+  assign color_transparent = 'rgba(0,0,0,0)'
+
+  if settings.color_1 and settings.color_1 != color_transparent
+    assign color_1 = settings.color_1
+  endif
+  
+  if settings.color_2 and settings.color_2 != color_transparent
+    assign color_2 = settings.color_2
+  endif
+  
+  if settings.color_3 and settings.color_3 != color_transparent
+    assign color_3 = settings.color_3
+  endif
+  
+  if settings.color_4 and settings.color_4 != color_transparent
+    assign color_4 = settings.color_4
+  endif
+  
+  if settings.color_5 and settings.color_5 != color_transparent
+    assign color_5 = settings.color_5
+  endif
+  
+  if settings.color_error and settings.color_error != color_transparent
+    assign color_error = settings.color_error
+  endif
+  
+  if settings.color_success and settings.color_success != color_transparent
+    assign color_success = settings.color_success
+  endif
+
+-%}
+
+:root,
+::before, 
+::after {
+  --color-1: {%- if color_1 -%} {{ color_1 }} {%- else -%} #121212 {%- endif -%};
+  --color-2: {%- if color_2 -%} {{ color_2 }} {%- else -%} #767676 {%- endif -%};
+  --color-3: {%- if color_3 -%} {{ color_3 }} {%- else -%} #DEDEDE {%- endif -%};
+  --color-4: {%- if color_4 -%} {{ color_4 }} {%- else -%} #F0F0F0 {%- endif -%};
+  --color-5: {%- if color_5 -%} {{ color_5 }} {%- else -%} #FFFFFF {%- endif -%};
+  --color-error: {%- if color_error -%} {{ color_error }} {%- else -%} #e31818 {%- endif -%};
+  --color-success: {%- if color_success -%} {{ color_success }} {%- else -%} #00c236 {%- endif -%};
+  --icon-search-bg: url({{ 'icon-search.svg' | asset_url }});
+}

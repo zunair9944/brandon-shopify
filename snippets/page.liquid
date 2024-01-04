@@ -1,0 +1,54 @@
+{%- liquid
+  assign is_sidebar_visible = false
+  for link in linklists[settings.sidebar_menu].links
+    if link.active or link.child_active
+      assign is_sidebar_visible = true
+      break
+    endif
+  endfor
+-%}
+
+<div class="page-wrapper">
+  {%- if is_sidebar_visible -%}
+    <div class="page-sidebar">
+      {%- render 'page-sidebar' -%}
+    </div>
+  {%- endif -%}
+  {%- if is_policy -%}
+    <div class="page">
+      <div class="page__content">
+        {%- render 'rte-content', content: content -%}
+      </div>
+    </div>
+  {%- else -%}
+    <div class="page {{ extra_class }}">
+      <div class="page-container {% if page.metafields.custom.small_spacing %} page-container--smallspacing {% endif %}">
+        <div class="page__heading">
+          <h1 class="page__title">
+            {%- assign heading = page.title -%}
+            {%- render 'italic-first-word', text: heading -%}
+          </h1>
+        </div>
+        {%- if is_sidebar_visible -%}
+          <div class="page-sidebar page-sidebar--mobile">
+            {%- render 'page-sidebar' -%}
+          </div>
+        {%- endif -%}
+        <div class="page__content">
+          {%- assign content = page.content -%}
+          {%- if page.metafields.custom.accordion_style -%}
+            {%- capture content -%}
+              {%- render 'stylesheet', name: 'accordion-block' -%}
+              <accordion-parser>{{ page.content }}</accordion-parser>
+            {%- endcapture -%}
+          {%- endif -%}
+
+          {%- render 'rte-content', content: content -%}
+        </div>
+        {%- if extra_content != blank -%}
+          <div class="page__extra-content">{{ extra_content }}</div>
+        {%- endif -%}
+      </div>
+    </div>
+  {%- endif -%}
+</div>

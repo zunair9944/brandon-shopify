@@ -1,0 +1,36 @@
+{%- render 'stylesheet', name: '404' -%}
+<div class="page-404">
+  <div class="page-404-header">
+    <div class="page-404__textblock">
+      <h1 class="template__heading" role="heading">
+        {%- assign heading = 'templates.404.404_heading' | t -%}
+        {%- render 'italic-first-word', text: heading -%}
+      </h1>
+    </div>
+    {%- if section.settings.btn_text != blank and section.settings.btn_link != blank -%}
+      <a class="page-404__redirect button-1" href="{{ section.settings.btn_link }}">{{ section.settings.btn_text }}</a>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "404",
+  "tag": "section",
+  "class": "section-404",
+  "settings": [
+    {
+      "type": "text",
+      "id": "btn_text",
+      "default": "Back to home",
+      "label": "404 Page button text"
+    },
+    {
+      "type": "url",
+      "id": "btn_link",
+      "label": "404 Page button link"
+    }
+  ],
+  "blocks": []
+}
+{% endschema %}

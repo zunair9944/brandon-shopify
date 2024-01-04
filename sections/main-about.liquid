@@ -1,0 +1,220 @@
+{%- render 'stylesheet', name: 'page' -%}
+{%- render 'stylesheet', name: 'grid-image' -%}
+{%- liquid
+  assign blocks = section.blocks
+%}
+
+
+{%- if template.suffix contains "about" -%}
+  <div class="page__heading">
+    <h1 class="page__title"> 
+      {%- assign heading = page.title -%} 
+      {%- render 'italic-first-word', text: heading -%}
+    </h1>
+  </div> 
+  <div class="page-wrapper">
+    <div class="sidebar-wrapper">
+      <div class="page-sidebar tablet-sidebar">
+        <ul class="sidebar__collection">
+          {%- for block in blocks -%}
+            {%- if block.type == "block_title" -%}
+              <li class="collection__item" data-current-id="{{ block.id }}">
+                {{- block.settings.block_title -}}
+              </li>
+            {%- endif -%}
+          {%- endfor -%}
+        </ul>
+    </div>
+    </div>
+      <div class="page">
+        <div class="page__content">
+          {%- if section.settings.video_url != blank -%}
+            <div class="video--wrapper">
+              <video
+                autoplay
+                muted
+                loop
+                class="grid__video"
+                playsinline
+                preload="none"
+                poster="{{ section.settings.video_poster | img_url: "1920x1080" }}"
+                src="{{ section.settings.video_url }}"
+              ></video>
+              <button data-video-toggle="true">
+                {% render 'play-icon' %}
+                {% render 'pause-icon' %}
+                <span>{{- 'about.video.play' | t -}}</span>
+                <span>{{- 'about.video.pause' | t -}}</span>
+              </button>
+            </div>
+          {%- endif -%}
+          {%- for block in blocks -%}
+            {%- assign block_items = block.settings -%}
+            {%- case block.type -%}
+              {%- when 'block_title' -%}
+                  <h2 class="grid__title">{%- render 'italic-first-word', text: block_items.block_title -%}</h2>
+              {%- when 'block_content' -%}
+                <p class="grid__rte">{{- block_items.block_content -}}</p>
+              {%- when 'block_image' -%}
+                <div class="grid__imageblock">
+                  {%- if block_items.section_image_1.image != blank and block_items.section_image_2.image != blank -%}
+                    <div class="grid-images">
+                      {{ block_items.section_image_1.image | image_url: width: 437 | image_tag: preload: true, class: 'grid-image--primary', loading: "lazy" }}
+                      {{ block_items.section_image_2.image | image_url: width: 516 | image_tag: preload: true, class: 'grid-image--secondary', loading: "lazy" }}
+                    </div>
+                  {%- elsif block_items.section_image_1.image -%}
+                    <div class="single-image">
+                      {{ block_items.section_image_1.image | image_url: width: 1920 | image_tag: preload: true, class: 'grid-image--single', loading: "lazy" }}
+                    </div>
+                  {%- elsif block_items.section_image_2.image -%}
+                    <div class="single-image">
+                      {{ block_items.section_image_2.image | image_url: width: 1920 | image_tag: preload: true, class: 'grid-image--single', loading: "lazy" }}
+                    </div>
+                  {%- endif -%}
+                </div>
+              {%- when 'block_blockquote' -%}
+                {%- if block_items.section_blockquote != blank -%}
+                  <blockquote class="grid-blockquote">
+                    {{- block_items.section_blockquote -}}
+                  </blockquote>
+                {%- endif -%}
+              {%- if block_items.section_citation != blank -%}
+                <p class="grid-citation">{{- block_items.section_citation | prepend: '—' -}}</p>
+              {%- endif -%}
+            {%- endcase -%}
+          {%- endfor -%}
+      </div>
+      </div>
+  </div> 
+{%- endif -%}
+
+<script>
+  const sidebarLink = document.querySelectorAll(".collection__item");
+  const sections = document.querySelectorAll(".grid__imageblock");
+  sidebarLink[0].classList.add("active-sidebar-link")
+  sidebarLink.forEach((link, index) => {
+    link.addEventListener('click', (e) => {
+      sidebarLink.forEach(i => {
+        i.classList.remove("active-sidebar-link")
+      })
+      link.classList.remove("active-sidebar-link");
+      const currentId = sections[index].dataset.currentId;
+      if(
+        link.classList.contains("collection__item")
+        && sections[index].dataset.currentId === currentId
+      ){
+        link.classList.add("active-sidebar-link")
+        sections[index].scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
+    })
+  })
+
+  const playAndPause = document.querySelector("button[data-video-toggle]");
+  const video = document.querySelector(".grid__video");
+  let videoPlayingStatus = true;
+
+  playAndPause.addEventListener('click', () => {
+    if(videoPlayingStatus){
+      playAndPause.setAttribute("data-video-toggle", false)
+      video.pause();
+    }
+    else{
+      playAndPause.setAttribute("data-video-toggle", true)
+      video.play();
+    }
+    videoPlayingStatus = !videoPlayingStatus;
+  })
+</script>
+
+{% schema %}
+{
+  "name": "Main about",
+  "settings": [
+    {
+      "type": "text",
+      "id": "video_url",
+      "label": "Section video url"
+    },
+    {
+      "type": "image_picker",
+      "id": "video_poster",
+      "label": "Section video poster"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "block_title",
+      "name": "Block title",
+      "settings": [
+        {
+          "type": "text",
+          "id": "block_title",
+          "label": "Section title"
+        }
+      ]
+    },
+    {
+      "type" : "block_image",
+      "name" : "Block image",
+      "settings": [
+        {
+          "type" : "image_picker",
+          "id" : "section_image_1",
+          "label" : "Section image one"
+        },
+        {
+          "type": "image_picker",
+          "id": "section_image_2",
+          "label": "Section image two"
+        }
+      ]
+    },
+    {
+      "type" : "block_content",
+      "name" : "Block content",
+      "settings" : [
+        {
+          "type": "richtext",
+          "id": "block_content",
+          "label": "Block content"
+        }
+      ]
+    },
+    {
+      "type" : "block_blockquote",
+      "name" : "Block quote",
+      "settings" : [
+        {
+          "type": "textarea",
+          "id": "section_blockquote",
+          "label": "Section blockquote"
+        },
+        {
+          "type": "text",
+          "id": "section_citation",
+          "label": "Section blockquote citation"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Main about",
+      "blocks": [
+        {
+          "type": "block_title"
+        },
+        {
+          "type" : "block_image"
+        },
+        {
+          "type" : "block_content"
+        },
+        {
+          "type" : "block_blockquote"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

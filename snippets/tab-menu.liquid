@@ -1,0 +1,21 @@
+<tab-menu>
+  {%- render 'stylesheet', name: 'tab-menu' -%}
+  <div class="tab-menu-list-box">
+    <ul class="list tab-menu">
+      {%- for link in tab_menu.links -%}
+        {%- assign is_current_page = false -%}
+        {%- if canonical_url contains link.url -%}
+          {%- assign is_current_page = true -%}
+        {%- endif -%}
+  
+        <li class="tab-menu__item" data-is-current="{{ is_current_page }}">
+          <a href="{{ link.url }}" class="tab-menu__item-link text-1">{{ link.title }}</a>
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+  <div class="tab-menu__controls">
+    <button type="button" class="tab-menu__control tab-menu__control--prev">{%- render 'icon-left' -%}</button>
+    <button type="button" class="tab-menu__control tab-menu__control--next">{%- render 'icon-right' -%}</button>
+  </div>
+</tab-menu>

@@ -1,0 +1,33 @@
+<script>
+  let FONT_BASE = 16;
+  window.THEME_GLOBAL = {
+    ICON: {
+      LEFT_LONG: "{{ 'icon-left-long.svg' | asset_url }}",
+      LEFT: "{{ 'icon-left.svg' | asset_url }}",
+      RIGHT_LONG: "{{ 'icon-right-long.svg' | asset_url }}",
+      RIGHT: "{{ 'icon-right.svg' | asset_url }}",
+      CLOSE: "{{ 'icon-close.svg' | asset_url }}"
+    },
+    ICON_SVG: {
+      RIGHT_LONG: `{%- render 'icon-right-long' -%}`,
+    },
+    CSS: {
+      FONT_BASE,
+      DISTANCE_BASE: FONT_BASE * 3 
+    },
+    EVENT: {
+      updateGlobalCssVariables: 'updateGlobalCssVariables',
+    },
+    BREAKPOINT: {
+      MOBILE: 479,
+      TABLET: 767,
+      TABLET_L: 991,
+      DESKTOP_S: 1150
+    },
+    TRANSITION: {
+      ONE: 300,
+      TWO: 600
+    },
+    DIMENSION: {}
+  }
+</script>

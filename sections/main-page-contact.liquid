@@ -1,0 +1,70 @@
+{% render 'stylesheet', name: 'page' %}
+
+{%- liquid
+  assign blocks = section.blocks
+  
+  assign contact_emails = blocks | where: 'type', 'contact-email'
+  assign total_contact_emails = contact_emails | size
+
+  assign contact_form_html = section.settings.contact_form_html
+-%}
+
+{%- capture extra_content -%}
+  {%- if total_contact_emails > 0 -%}
+    <ul class="list contact-email-list">
+      {%- for block in contact_emails -%}
+        <li class="contact-email rte">
+          <span class="contact-email__name text-1">{{ block.settings.name }}</span>
+          <span class="contact-email__email">
+            <a href="mailto:{{ block.settings.email }}">{{ block.settings.email }}</a>
+          </span>
+        </li>
+      {%- endfor -%}
+    </ul>
+  {%- endif -%}
+
+  {%- if contact_form_html != blank -%}
+    <div class="contact-form">
+      {{ contact_form_html }}
+    </div>
+  {%- endif -%}
+{%- endcapture -%}
+
+{%- render 'page' with 
+  page: page,
+  extra_class: 'page--contact',
+  extra_content: extra_content
+-%}
+
+{% schema %} 
+{
+  "name": "Contact Page",
+  "tag": "article",
+  "class": "section-page section-page--contact",
+  "settings": [
+    {
+      "type": "html",
+      "id": "contact_form_html",
+      "label": "Contact form HTML"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "contact-email",
+      "name": "Contact Email",
+      "settings": [
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Name"
+        },
+        {
+          "type": "text",
+          "id": "email",
+          "label": "Email"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

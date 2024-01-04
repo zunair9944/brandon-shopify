@@ -1,0 +1,60 @@
+{%- render 'stylesheet', name: 'account-sidebar' -%}
+
+<div class="account-sidebar">
+  <div class="sidebar__container">
+    <div class="sidebar__header">
+      <p>
+        {{- 'templates.account_dashboard.account_sidebar.account_sidebar_welcome' | t -}}
+        {%- unless customer.first_name == blank -%}
+          , {{ customer.first_name -}}
+        {%- endunless -%}
+        !
+      </p>
+    </div>
+    <nav class="sidebar-nav">
+      <ul class="s-nav__collection">
+        <li class="s-nav__collection-item">
+          <a aria-current="page" class="s-nav__collection-link" href="{{ routes.account_url }}">
+            {{ 'templates.account_dashboard.account_sidebar.account_sidebar_dash_t' | t }}
+          </a>
+        </li>
+        <li class="s-nav__collection-item">
+          <a class="s-nav__collection-link" href="{{ routes.account_addresses_url }}">
+            {{ 'templates.account_dashboard.account_sidebar.account_sidebar_add_t' | t }}
+          </a>
+        </li>
+        <li class="s-nav__collection-item">
+          <a class="s-nav__collection-link" href="/a/gc/gift-card/balance/">
+            {{ 'templates.account_dashboard.account_sidebar.account_sidebar_gift_t' | t }}
+          </a>
+        </li>
+        <li class="s-nav__collection-item">
+          <a class="s-nav__collection-link" href="/pages/swym-wishlist?originInstrument=12originInstrument=12">
+            {{ 'templates.account_dashboard.account_sidebar.account_sidebar_wish_t' | t }}
+          </a>
+        </li>
+        <li class="s-nav__collection-item">
+          <a class="s-nav__collection-link" href="{{ routes.account_logout_url }}">
+            {{ 'templates.account_dashboard.account_sidebar.account_sidebar_log_t' | t }}
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>
+
+<script>
+  const sidebarLinks = document.querySelectorAll('.s-nav__collection-link');
+  sidebarLinks.forEach(link => {
+      link.removeAttribute('aria-current')
+      if(window.location.href == link.href){
+        link.setAttribute('aria-current', 'page'); 
+      }
+      else if (window.location.href.includes("orders") || window.location.href.includes("account?page") || window.location.pathname.split("/").length == 2){
+        sidebarLinks[0].setAttribute('aria-current', 'page')
+      }
+      else if(window.location.href.includes("addresses")){
+        sidebarLinks[1].setAttribute('aria-current', 'page')
+      }
+    })
+</script>

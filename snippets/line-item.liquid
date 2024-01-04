@@ -1,0 +1,105 @@
+{%- comment -%}
+  Renders a line item
+
+  Accepts:
+  - line_item: {Object} Shopify line_item object
+  - is_expanding: {Boolean} Expand line item's layout on the desktops
+  - hide_controls: {Boolean} Hide quantity controls and the "remove" button
+{%- endcomment -%}
+
+
+<div
+  class="line-item {% if is_expanding %}line-item--expanding{% endif %} {% if hide_controls %}line-item--no-controls{% endif %}"
+  data-index="{{ line_item.index }}"
+>
+  <a href="{{ line_item.url }}" class="line-item__image-container">
+    {%- if line_item.image -%}
+      {{ line_item.image | image_url: width: 150 | image_tag: alt: alt, class: 'line-item__image', loading: 'lazy', sizes: '150px' }}
+    {%- endif -%}
+  </a>
+
+  <div class="line-item__info">
+    <div class="line-item__title">
+      <a class="line-item__title-link" href="{{ line_item.url }}">
+        {{- line_item.product.title | escape -}}
+      </a>
+    </div>
+    {%- if line_item.product.has_only_default_variant == false -%}
+      <div class="line-item__options">
+        {%- for option in line_item.options_with_values -%}
+          <div>{{ option.value }}</div>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+    {%- if line_item.properties != empty %}
+      <div class="line-item__properties">
+        {%- for property in line_item.properties -%}
+          {%- assign property_first_char = property.first | slice: 0 -%}
+          {%- if property.last != blank and property_first_char != '_' -%}
+            {%- if property.first == "PN-Note" -%}
+              <div>{{ property.last }}</div>
+            {%- else -%}
+              <div>{{ property.first }}: {{ property.last }}</div>
+            {%- endif -%}
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+
+  {%- unless hide_controls -%}
+    <div class="line-item__qty-container">
+      <div class="line-item__qty-error" data-ajax-cart-messages="{{ line_item.key }}"></div>
+      <div class="line-item__qty-control">
+        <a
+          href="{{ routes.cart_change_url }}?line={{ line_item.index | plus: 1 }}&quantity={{ line_item.quantity | minus: 1 }}"
+          data-ajax-cart-request-button
+          class="line-item__qty-button line-item__qty-button--decrease"
+          type="button"
+          aria-label="{{ 'templates.cart.decrease' | t }}"
+        >
+          {{- 'templates.cart.decrease' | t -}}
+        </a>
+        <span class="line-item__qty-value">{{ line_item.quantity }}</span>
+        <a
+          href="{{ routes.cart_change_url }}?line={{ line_item.index | plus: 1 }}&quantity={{ line_item.quantity | plus: 1 }}"
+          data-ajax-cart-request-button
+          class="line-item__qty-button line-item__qty-button--increase"
+          type="button"
+          aria-label="{{ 'templates.cart.increase' | t }}"
+        >
+          {{- 'templates.cart.increase' | t -}}
+        </a>
+      </div>
+    </div>
+  {%- endunless -%}
+
+  <div class="line-item__price-container">
+    {%- if line_item.original_price != line_item.final_price -%}
+      <b>
+        {{ line_item.final_price | money }}
+      </b>
+      <s>
+        {{- line_item.original_price | money -}}
+      </s>
+    {%- else -%}
+      <span>
+        {{ line_item.original_price | money }}
+      </span>
+    {%- endif -%}
+  </div>
+
+  {%- unless hide_controls -%}
+    <div class="line-item__remove-container">
+      <a
+        href="{{ routes.cart_change_url }}?line={{ line_item.index | plus: 1 }}&quantity=0"
+        class="line-item__remove-link text-1"
+        data-ajax-cart-request-button
+        type="button"
+        aria-label="{{ 'templates.cart.remove' | t }}"
+      >
+        {{- 'templates.cart.remove' | t -}}
+      </a>
+    </div>
+  {%- endunless -%}
+</div>

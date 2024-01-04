@@ -1,0 +1,115 @@
+{%- render 'stylesheet', name: 'form' -%}
+
+<div class="account-form">
+  <div class="form__image-wrapper register-image" data-target="desktop">
+    {{  settings.form_image.src | image_url: width: 1076, height: 807 | image_tag: class: "form__image", alt: settings.form_image.alt }}
+  </div>
+  <div class="form__fields-wrapper" id="login-form">
+    <account-form>
+      {%- form 'create_customer', class: 'form' -%} 
+        <div class="form__text--wrapper register-text--wrapper">
+          <h1 class="form__title" data-title="register">
+            {%- assign heading = 'templates.account_form.account_createaccount_title' | t -%}
+            {%- render 'italic-first-word', text: heading -%}
+          </h1>
+          <p class="form__instruction">{{ 'templates.account_form.account_createaccount_instruction' | t }}</p>
+        </div>
+
+        <div class="input-wrapper">
+          <input
+            type="text"
+            data-input-type="text"
+            id="customer-firstname"
+            name="customer[first_name]"
+            class="customer__input notrequired"
+          >
+          <label for="customer-firstname">{{ 'templates.account_form.account_createaccount_firstname' | t }}</label>
+        </div>
+        <div class="input-wrapper">
+          <input
+            type="text"
+            data-input-type="text"
+            id="customer-lastname"
+            name="customer[last_name]"
+            class="customer__input notrequired"
+          >
+          <label for="customer-lastname">{{ 'templates.account_form.account_createaccount_lastname' | t }}</label>
+        </div>
+        <div class="input-wrapper">
+          <input
+            required
+            type="email"
+            data-input-type="email"
+            id="customer-email"
+            name="customer[email]"
+            {%- if form.errors -%} 
+              aria-invalid="true"
+            {%- endif -%}
+            class="customer__input notrequired"
+          >
+          <label for="customer-email">{{ 'templates.account_form.account_login_email' | t }}</label>
+        </div>
+        <div class="input-wrapper">
+          <input
+            required
+            type="password"
+            data-input-type="password"
+            id="customer_password"
+            name="customer[password]"
+            {%- if form.errors -%} 
+              aria-invalid="true"
+            {%- endif -%}
+            class="customer__input"
+          >
+          <label for="customer_password">{{ 'templates.account_form.account_login_pwd' | t }}</label>
+        </div>
+        <p class="account__password-requirements">{{ 'templates.account_form.account_password_requirements' | t }}</p>
+          <label class="account__formcheckbox" for="formcheckbox__input">
+            <input type="hidden" name="customer[accepts_marketing]" value="false" />
+            <input id="formcheckbox__input" type="checkbox" name="customer[accepts_marketing]">
+            <span class="formcheckbox__checkmark"></span>
+            <p>{{ 'templates.account_form.account_createaccount_newsletter' | t }}</p>
+          </label>
+        {%- if form.errors -%}
+          <div class="form-error--default register-error">
+            {% render 'icon-alert' %}
+            {{ form.errors | default_errors }} 
+          </div>
+        {%- endif -%}
+        <button class="customer__formbtn" type="submit" disabled>
+          <span data-media-hidden="true">{{ "templates.account_form.account_createaccount_btn" | t }}</span>
+          <span data-media-hidden="false">{{ "templates.account_form.account_createaccount_shorttitle" | t }}</span>
+        </button>
+        <p class="form__suggestion">{{ 'templates.account_form.account_createaccount_suggestion' | t }}</p>
+        <a class="form__options link-hover" href="{{ routes.account_login_url }}">
+          {{- 'templates.account_form.account_login_button' | t -}}
+        </a>
+      {%- endform -%}
+    </account-form>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.notrequired').forEach(i => {
+    i.addEventListener('focus', (e) => {
+      e.target.classList.add('notrequiredactive')
+    })
+    i.addEventListener('blur', (e) => {
+      if(e.target.value.length < 1){
+        e.target.classList.remove('notrequiredactive')
+      }
+    })
+    if(i.value.length == 0){
+        i.classList.remove('notrequiredactive')
+    } 
+  })
+</script>
+
+{% schema %}
+{
+  "name": "Register",
+  "tag": "section",
+  "class": "section-register",
+  "settings": []
+}
+{% endschema %}

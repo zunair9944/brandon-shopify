@@ -1,0 +1,741 @@
+{%- render 'stylesheet', name: 'account' -%}
+{%- render 'stylesheet', name: 'form' -%}
+{%- render 'tag-script', name: 'account', loading: 'defer' -%}
+
+{%- assign address_form_edit = "" -%}
+
+<div class="account">
+  {%- render 'account-banner', account_banner_text: 'templates.account_dashboard.account_sidebar.account_sidebar_add_t' -%}
+  <div class="account__container">
+    {%- render 'account-sidebar' -%} 
+    {%- render 'account-mobile-sidebar' -%}
+    <div class="account__content" id="acocunt-content">
+      <div class="content__container">
+        {%- if customer.addresses_count > 0 -%}
+          <div class="address__wrapper">
+            <div class="default__address">
+              {%- render 'detail-header', subtitle: 'templates.account_dashboard.account_content.account_defaddress_subtitle' -%}
+              {%- if customer.default_address != blank -%}
+                <div class="address__formatter">
+                  {{ customer.default_address | format_address }}
+                </div>
+                <p class="detail__info">{{ customer.default_address.phone }}</p>
+                <div class="address__actions">
+                  <button
+                    data-edit-address="{{ customer.default_address.id }}"
+                    type="button" 
+                    class="a-action__btn edit-address-btn"
+                  >
+                    {{ 'templates.account_dashboard.account_content.account_address_edit' | t }}
+                  </button>
+                  <form
+                    class="address-delete-form"
+                    method="post"
+                    action="/account/addresses/{{ customer.default_address.id }}"
+                  >
+                    <input type="hidden" name="_method" value="delete">
+                    <div role="button" class="a-action__btn" id="action__delete-btn">
+                      {{ 'templates.account_dashboard.account_content.account_address_delete' | t }}
+                    </div>
+                  </form>
+                </div>
+                {%- capture form_edit -%}
+                {%- form 'customer_address', customer.default_address, data-address-form: customer.default_address.id, class: "hide"  -%}
+                <div class="joint-input-wrapper">
+                  <div>
+                    <div class="input-wrapper">
+                      <input
+                        type="text"
+                        autocomplete="given-name"
+                        data-input-type="text"
+                        value="{{ form.first_name }}"
+                        id="address_firstname"
+                        name="address[first_name]"
+                        class="customer__input notrequired"
+                      >
+                      <label for="address_firstname">{{ 'templates.address_form.form_fname' | t }}</label>
+                    </div>
+                    <div class="form-error">
+                      {% render 'icon-alert' %}
+                      {{ 'templates.account_form.account_form_errors.account_newaddress_form_error' | t }}
+                    </div>
+                  </div>
+                  <div>
+                    <div class="input-wrapper">
+                      <input
+                        type="text"
+                        autocomplete="family-name"
+                        value="{{ form.last_name }}"
+                        data-input-type="text"
+                        id="address_lastname"
+                        name="address[last_name]"
+                        class="customer__input notrequired"
+                      >
+                      <label for="address_lastname">{{ 'templates.address_form.form_lname' | t }}</label>
+                    </div>
+                    <div class="form-error">
+                      {% render 'icon-alert' %}
+                      {{ 'templates.account_form.account_form_errors.account_newaddress_form_error' | t }}
+                    </div>
+                  </div>
+                </div>
+                <div class="input-wrapper">
+                  <input
+                    type="text"
+                    autocomplete="address-level1"
+                    data-input-type="text"
+                    value="{{ form.address1 }}"
+                    id="address_address1"
+                    name="address[address1]"
+                    class="customer__input notrequired"
+                  >
+                  <label for="address_address1">{{ 'templates.address_form.form_address1' | t }}</label>
+                </div>
+                <div class="form-error">
+                  {% render 'icon-alert' %}
+                  {{ 'templates.account_form.account_form_errors.account_newaddress_form_error' | t }}
+                </div>
+                <div class="input-wrapper">
+                  <input
+                    type="text"
+                    autocomplete="address-level2"
+                    data-input-type="text"
+                    id="address_address2"
+                    value="{{ form.address2 }}"
+                    name="address[address2]"
+                    class="customer__input notrequired"
+                  >
+                  <label for="address_address2">{{ 'templates.address_form.form_address2' | t }}</label>
+                </div>
+                <div class="input-wrapper">
+                  <input
+                    type="text"
+                    data-input-type="text"
+                    id="address_city"
+                    value="{{ form.city }}"
+                    name="address[city]"
+                    class="customer__input notrequired"
+                  >
+                  <label for="address_city">{{ 'templates.address_form.form_city' | t }}</label>
+                </div>
+                <div class="form-error">
+                  {% render 'icon-alert' %}
+                  {{ 'templates.account_form.account_form_errors.account_newaddress_form_error' | t }}
+                </div>
+                <div class="input-wrapper">
+                  <select
+                    data-input-type="text"
+                    id="address__country-edit-{{ customer.default_address.id }}"
+                    class="customer__input country-select"
+                    data-default="{{ form.country }}"
+                    autocomplete="country"
+                    data-form-id="{{ form.id }}"
+                    required
+                    data-address-country-select="{{ customer.default_address.id }}"
+                    name="address[country]"
+                  >
+                    {{ all_country_option_tags }}
+                  </select>
+                  <label for="address__country-edit">{{ 'templates.address_form.form_countryreg' | t }}</label>
+                </div>
+                <div class="form-error">
+                  {% render 'icon-alert' %}
+                  {{ 'templates.account_form.account_form_errors.account_newaddress_form_error' | t }}
+                </div>
+                <div class="joint-input-wrapper">
+                  <div class="input-wrapper" id="province-selector-{{ customer.default_address.id }}">
+                    <select
+                      data-state-filter
+                      data-input-type="text"
+                      data-default="{{ form.province }}"
+                      id="address__state-edit-{{ customer.default_address.id }}"
+                      class="customer__input country-select"
+                      name="address[province]"
+                      autocomplete="address-level1"
+                    ></select>
+                    <label for="address__state-edit">{{ 'templates.address_form.form_state' | t }}</label>
+                  </div>
+                  <div class="input-wrapper">
+                    <input
+                      type="text"
+                      data-input-type="text"
+                      id="address_zip"
+                      value="{{ form.zip }}"
+                      name="address[zip]"
+                      class="customer__input notrequired"
+                    >
+                    <label for="address_zip">{{ 'templates.address_form.form_zip' | t }}</label>
+                  </div>
+                </div>
+                <div class="input-wrapper">
+                  <input
+                    type="text"
+                    data-input-type="text"
+                    id="address_phone"
+                    value="{{ form.phone }}"
+                    name="address[phone]"
+                    class="customer__input notrequired"
+                  >
+                  <label for="address_phone">{{ 'templates.address_form.form_phone' | t }}</label>
+                </div>
+                <div class="account__formcheckbox">
+                  <label for="address_default_address_{{ customer.default_address.id }}">
+                    {{ form.set_as_default_checkbox }}
+                    <span class="formcheckbox__checkmark"></span>
+                    {{ 'templates.address_form.form_setdef' | t }}
+                  </label>
+                </div>
+                <button type="submit" class="account__action-btn button-1 button-1--alt">
+                  {{ 'templates.account_dashboard.account_content.account_address_edit_submit' | t }}
+                </button>
+                <button type="reset" class="a-action-cancel__btn">
+                  {{ 'templates.account_dashboard.account_content.account_address_cancel' | t }}
+                </button>
+                {%- endform -%}
+              {%- endcapture -%}
+              {% assign address_form_edit = address_form_edit | append: form_edit %}
+                
+              {%- else -%}
+                <p class="detail__info">
+                  {{ 'templates.account_dashboard.account_content.account_nodefaultadd_msg' | t }}
+                </p>
+              {%- endif -%} 
+            </div>
+            {%- assign count = 0 -%}
+            {% if customer.addresses_count > 1 %}
+              <div class="additional__address">
+                {%- assign address_per_page = 11 -%}
+                {%- render 'detail-header', subtitle: 'templates.account_dashboard.account_content.account_add_address_subtitle' -%}
+                {% paginate customer.addresses by address_per_page %}
+                  <div class="address__collection">
+                    {% for address in customer.addresses %} 
+                      {%- unless address == customer.default_address -%}
+                      {%- assign count = count | plus: 1 -%}
+                        <div class="a-collection__item">
+                          <p class="addres__counter">
+                            {{ 'templates.account_dashboard.account_content.account_address_counter' | t }}
+                            {{ paginate.current_page | times: 10 | plus: count | minus: 10 }}
+                          </p>
+                          <div class="address__formatter">
+                            {{ address | format_address }}
+                          </div>
+                          <p class="detail__info">{{address.phone}}</p> 
+                          <div class="address__actions">
+                            {% assign address_action =  address %}
+                            <button
+                              data-edit-address="{{ address.id }}"
+                              class="a-action__btn edit-address-btn"
+                            >
+                              {{ 'templates.account_dashboard.account_content.account_address_edit' | t }}
+                            </button>
+                            {%- capture form_edit -%}
+                              {%- form 'customer_address', address, data-address-form: address.id, class: "hide"  -%}
+                              <div class="joint-input-wrapper">
+                                <div>
+                                  <div class="input-wrapper">
+                                    <input
+                  
+                                      type="text"
+                                      autocomplete="given-name"
+                                      value="{{ form.first_name }}"
+                                      data-input-type="text"
+                                      id="address_firstname"
+                                      name="address[first_name]"
+                                      class="customer__input notrequired"
+                                    >
+                                    <label for="address_firstname">{{ 'templates.address_form.form_fname' | t }}</label>
+                                  </div>
+                                  <div class="form-error">
+                                    {% render 'icon-alert' %}
+                                    {{ 'templates.account_form.account_form_errors.account_newaddress_form_error' | t }}
+                                  </div>
+                                </div>
+                                <div>
+                                  <div class="input-wrapper">
+                                    <input
+                                      type="text"
+                                      autocomplete="family-name"
+                                      value="{{ form.last_name }}"
+                                      data-input-type="text"
+                                      id="address_lastname"
+                                      name="address[last_name]"
+                                      class="customer__input notrequired"
+                                    >
+                                    <label for="address_lastname">{{ 'templates.address_form.form_lname' | t }}</label>
+                                  </div>
+                                  <div class="form-error">
+                                    {% render 'icon-alert' %}
+                                    {{ 'templates.account_form.account_form_errors.account_newaddress_form_error' | t }}
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="input-wrapper">
+                                <input
+                                  type="text"
+                                  value="{{ form.address1 }}"
+                                  autocomplete="address-level1"
+                                  data-input-type="text"
+                                  id="address_address1"
+                                  name="address[address1]"
+                                  class="customer__input notrequired"
+                                >
+                                <label for="address_address1">{{ 'templates.address_form.form_address1' | t }}</label>
+                              </div>
+                              <div class="form-error">
+                                {% render 'icon-alert' %}
+                                {{ 'templates.account_form.account_form_errors.account_newaddress_form_error' | t }}
+                              </div>
+                              <div class="input-wrapper">
+                                <input
+                                  type="text"
+                                  autocomplete="address-level2"
+                                  data-input-type="text"
+                                  id="address_address2"
+                                  value="{{ form.address2 }}"
+                                  name="address[address2]"
+                                  class="customer__input notrequired"
+                                >
+                                <label for="address_address2">{{ 'templates.address_form.form_address2' | t }}</label>
+                              </div>
+                              <div class="input-wrapper">
+                                <input
+              
+                                  type="text"
+                                  data-input-type="text"
+                                  id="address_city"
+                                  value="{{ form.city }}"
+                                  name="address[city]"
+                                  class="customer__input notrequired"
+                                >
+                                <label for="address_city">{{ 'templates.address_form.form_city' | t }}</label>
+                              </div>
+                              <div class="form-error">
+                                {% render 'icon-alert' %}
+                                {{ 'templates.account_form.account_form_errors.account_newaddress_form_error' | t }}
+                              </div>
+                              <div class="input-wrapper">
+                                <select
+                                  data-input-type="text"
+                                  required
+                                  data-form-id="{{ form.id }}"
+                                  id="address__country-edit-{{ address.id }}"
+                                  data-default="{{ form.country }}"
+                                  class="customer__input country-select"
+                                  data-address-country-select="{{ address.id }}"
+                                  name="address[country]"
+                                  autocomplete="country"
+                                >
+                                  {{ all_country_option_tags }} 
+                                </select>
+                                <label for="address__country-edit">{{ 'templates.address_form.form_countryreg' | t }}</label>
+                              </div>
+                              <div class="form-error">
+                                {% render 'icon-alert' %}
+                                {{ 'templates.account_form.account_form_errors.account_newaddress_form_error' | t }}
+                              </div>
+                              <div class="joint-input-wrapper">
+                                <div class="input-wrapper" id="province-selector-{{ address.id }}">
+                                  <select
+                                    data-state-filter
+                                    data-input-type="text"
+                                    id="address__state-edit-{{ address.id }}"
+                                    data-default="{{ form.province }}"
+                                    autocomplete="address-level1"
+                                    class="customer__input country-select"
+                                    name="address[province]"
+                                  ></select>
+                                  <label for="address__state-edit">{{ 'templates.address_form.form_state' | t }}</label>
+                                </div>
+                                <div class="input-wrapper">
+                                  <input
+                                    type="text"
+                                    data-input-type="text"
+                                    id="address_zip"
+                                    name="address[zip]"
+                                    value="{{ form.zip }}"
+                                    class="customer__input notrequired"
+                                  >
+                                  <label for="address_zip">{{ 'templates.address_form.form_zip' | t }}</label>
+                                </div>
+                              </div>
+                              <div class="input-wrapper">
+                                <input
+                                  type="text"
+                                  data-input-type="text"
+                                  id="address_phone"
+                                  value="{{ form.phone }}"
+                                  name="address[phone]"
+                                  class="customer__input notrequired"
+                                >
+                                <label for="address_phone">{{ 'templates.address_form.form_phone' | t }}</label>
+                              </div>
+                              <div class="account__formcheckbox">
+                                <label for="address_default_address_{{ address.id }}">
+                                  {{ form.set_as_default_checkbox }}
+                                  <span class="formcheckbox__checkmark"></span>
+                                  {{ 'templates.address_form.form_setdef' | t }}
+                                </label>
+                              </div>
+                              <button type="submit" class="account__action-btn button-1 button-1--alt">
+                                {{ 'templates.account_dashboard.account_content.account_address_edit_submit' | t }}
+                              </button>
+                              <button type="reset" class="a-action-cancel__btn">
+                                {{ 'templates.account_dashboard.account_content.account_address_cancel' | t }}
+                              </button>
+                              {%- endform -%}
+                            {%- endcapture -%}
+
+                            {% assign address_form_edit = address_form_edit | append: form_edit %}
+                            <form
+                              class="address-delete-form"
+                              method="post"
+                              action="/account/addresses/{{ address.id }}"
+                            >
+                              <input type="hidden" name="_method" value="delete">
+                              <button type="button" class="a-action__btn" id="action__delete-btn">
+                                {{ 'templates.account_dashboard.account_content.account_address_delete' | t }}
+                              </button>
+                            </form>
+                          </div>
+                        </div>
+                      {%- endunless -%}
+                    {% endfor %}
+                  </div>
+                  <button class="account__action-btn active__action-btn button-1 button-1--alt" id="add-new-address">
+                    {{ 'templates.account_dashboard.account_content.account_address_addnew' | t }}
+                  </button>
+                  {% if customer.addresses_count > address_per_page %}
+                    <div class="account__pagination-container" data-pagination="address">
+                      <div class="account__pagination">
+                        {% render 'pagination', paginate: paginate %}
+                      </div>
+                    </div>
+                  {% endif %}
+                {% endpaginate %}
+              </div>
+            {% else %}
+              <button class="account__action-btn active__action-btn button-1 empty-address-btn button-1--alt" id="add-new-address">
+                {{ 'templates.account_dashboard.account_content.account_address_addnew' | t }}
+              </button>
+            {% endif %}
+          </div>
+        {% else %}
+          <div class="noaddress-alert">
+            <p role="alert" class="detail__info">
+              {{ 'templates.account_dashboard.account_content.account_noaddress_indicator' | t }}
+            </p>
+            <button class="account__action-btn active__action-btn button-1 empty-address-btn button-1--alt" id="add-new-address">
+              {{ 'templates.account_dashboard.account_content.account_address_addnew' | t }}
+            </button>
+          </div>
+        {% endif %}
+        <!-- Edit address form -->
+        <div class="editaddress__wrapper hide">
+          <div role="heading" class="newaddress__heading" id="address-form-heading">
+            {%- assign heading = 'templates.account_dashboard.account_content.account_address_edit_title' | t -%}
+            {%- render 'italic-first-word', text: heading -%}
+          </div>
+          {{ address_form_edit }}
+        </div>
+
+        <!-- Add address form -->
+        <div class="newaddress__wrapper hide">
+          <div role="heading" class="newaddress__heading" id="address-form-heading">
+            {%- assign heading = 'templates.account_dashboard.account_content.account_address_addnew' | t -%}
+            {%- render 'italic-first-word', text: heading -%}
+          </div>
+          {% form 'customer_address', customer.new_address,  id: "address-form" %}
+            <div class="joint-input-wrapper">
+              <div>
+                <div class="input-wrapper">
+                  <input
+                    type="text"
+                    autocomplete="given-name"
+                    data-input-type="text"
+                    id="address_firstname"
+                    name="address[first_name]"
+                    class="customer__input notrequired"
+                  >
+                  <label for="address_firstname">{{ 'templates.address_form.form_fname' | t }}</label>
+                </div>
+                <div class="form-error">
+                  {% render 'icon-alert' %}
+                  {{ 'templates.account_form.account_form_errors.account_newaddress_form_error' | t }}
+                </div>
+              </div>
+
+              <div>
+                <div class="input-wrapper">
+                  <input
+                    type="text"
+                    autocomplete="family-name"
+                    data-input-type="text"
+                    id="address_lastname"
+                    name="address[last_name]"
+                    class="customer__input notrequired"
+                  >
+                  <label for="address_lastname">{{ 'templates.address_form.form_lname' | t }}</label>
+                </div>
+                <div class="form-error">
+                  {% render 'icon-alert' %}
+                  {{ 'templates.account_form.account_form_errors.account_newaddress_form_error' | t }}
+                </div>
+              </div>
+            </div>
+            <div class="input-wrapper">
+              <input
+                type="text"
+                autocomplete="address-level1"
+                data-input-type="text"
+                id="address_address1"
+                name="address[address1]"
+                class="customer__input notrequired"
+              >
+              <label for="address_address1">{{ 'templates.address_form.form_address1' | t }}</label>
+            </div>
+            <div class="form-error">
+              {% render 'icon-alert' %}
+              {{ 'templates.account_form.account_form_errors.account_newaddress_form_error' | t }}
+            </div>
+            <div class="input-wrapper">
+              <input
+                type="text"
+                autocomplete="address-level2"
+                data-input-type="text"
+                id="address_address2"
+                name="address[address2]"
+                class="customer__input notrequired"
+              >
+              <label for="address_address2">{{ 'templates.address_form.form_address2' | t }}</label>
+            </div>
+            <div class="input-wrapper">
+              <input
+                type="text"
+                data-input-type="text"
+                id="address_city"
+                name="address[city]"
+                class="customer__input notrequired"
+              >
+              <label for="address_city">{{ 'templates.address_form.form_city' | t }}</label>
+            </div>
+            <div class="form-error">
+              {% render 'icon-alert' %}
+              {{ 'templates.account_form.account_form_errors.account_newaddress_form_error' | t }}
+            </div>
+            <div class="input-wrapper">
+              <select
+                data-input-type="text"
+                id="address__country-add"
+                data-address-country-select
+                class="customer__input country-select"
+                required
+                name="address[country]"
+              >
+                <option value="" selected disabled></option>
+                {{ all_country_option_tags }}
+              </select>
+              <label for="address__country-add">{{ 'templates.address_form.form_countryreg' | t }}</label>
+            </div>
+            <div class="form-error">
+              {% render 'icon-alert' %}
+              {{ 'templates.account_form.account_form_errors.account_newaddress_form_error' | t }}
+            </div>
+            <div class="joint-input-wrapper">
+              <div class="input-wrapper" id="province-selector-add">
+                <select
+                  data-state-filter
+                  data-input-type="text"
+                  id="address__state-add"
+                  class="customer__input country-select"
+                  name="address[province]"
+                ></select>
+                <label for="address__state-add">{{ 'templates.address_form.form_state' | t }}</label>
+              </div>
+              <div class="form-error">
+                {% render 'icon-alert' %}
+                {{ 'templates.account_form.account_form_errors.account_newaddress_form_error' | t }}
+              </div>
+              <div class="input-wrapper">
+                <input
+                  type="text"
+                  data-input-type="text"
+                  id="address_zip"
+                  name="address[zip]"
+                  class="customer__input notrequired"
+                >
+                <label for="address_zip">{{ 'templates.address_form.form_zip' | t }}</label>
+              </div>
+            </div>
+            <div class="input-wrapper">
+              <input
+                type="text"
+                data-input-type="text"
+                id="address_phone"
+                name="address[phone]"
+                class="customer__input notrequired"
+              >
+              <label for="address_phone">{{ 'templates.address_form.form_phone' | t }}</label>
+            </div>
+            <div class="account__formcheckbox">
+              <label for="address_default_address_new">
+                {{ form.set_as_default_checkbox }}
+                <span class="formcheckbox__checkmark"></span>
+                {{ 'templates.address_form.form_setdef' | t }}
+              </label>
+            </div>
+            <button type="submit" class="account__action-btn button-1 button-1--alt">
+              {{ 'templates.account_dashboard.account_content.account_address_addnew' | t }}
+            </button>
+            <button type="reset" class="a-action-cancel__btn">
+              {{ 'templates.account_dashboard.account_content.account_address_cancel' | t }}
+            </button>
+          {% endform %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 
+
+<script>
+  const addressWrapper = document.querySelector('.address__wrapper');
+  const newAddressWrapper = document.querySelector('.newaddress__wrapper');
+  const editAddressWrapper = document.querySelector('.editaddress__wrapper');
+  const noaddressAlert = document.querySelector(".noaddress-alert");
+  const cancelBtns = document.querySelectorAll(".a-action-cancel__btn");
+  const editBtns = document.querySelectorAll("[data-edit-address]");
+  const editForms = document.querySelectorAll("[data-address-form]");
+  const editAddresWrapper = document.querySelector(".editaddress__wrapper");
+
+  cancelBtns.forEach(cancelbtn => {
+    cancelbtn.addEventListener("click", () => {
+      if(addressWrapper){
+        addressWrapper.classList.remove("hide");
+      }
+      else{
+        noaddressAlert.classList.remove("hide")
+      } 
+      newAddressWrapper.classList.add("hide");
+      editAddressWrapper.classList.add("hide");
+      document.querySelectorAll('.notrequired').forEach(i => {
+        i.classList.remove('notrequiredactive');
+      })
+    })
+  })
+
+  
+  // Add new address
+  document.querySelectorAll("#add-new-address")
+  .forEach(addNewBtn => {
+    addNewBtn.addEventListener('click', () => {
+      if(addressWrapper){
+        addressWrapper.classList.add("hide");
+      }
+      else{
+        noaddressAlert.classList.add("hide")
+      }
+      newAddressWrapper.classList.remove("hide");
+      document.querySelector("#acocunt-content").scrollIntoView()
+    })
+    
+    document.querySelector("#address__state-add").classList.add("label-down")
+
+    document.querySelector("#address__country-add").addEventListener("change", () => {
+     document.querySelector("#address__state-add").classList.remove("label-down")
+    })  
+    
+  })
+
+  editBtns.forEach(editBtn => {
+    editBtn.addEventListener('click', () => {
+      editAddresWrapper.classList.remove("hide");
+      const address_id = editBtn.dataset.editAddress;
+      editForms.forEach(editForm => {
+        const form_address_id = editForm.dataset.addressForm;
+        editForm.classList.add("hide");
+        if(address_id == form_address_id){
+          editForm.classList.remove("hide");
+        }
+      })
+      addressWrapper.classList.add("hide");
+        document.querySelectorAll('.notrequired').forEach(i => {
+          if(i.value.length >= 1){
+            i.classList.add('notrequiredactive');
+          }
+      })
+      document.querySelector("#acocunt-content").scrollIntoView()
+    })
+  })
+
+    // Address validation styling
+    document.querySelectorAll('.notrequired').forEach(i => {
+      i.addEventListener('focus', (e) => {
+          e.target.classList.add('notrequiredactive')
+      })
+      i.addEventListener('blur', (e) => {
+        if(e.target.value.length < 1){
+          e.target.classList.remove('notrequiredactive')
+        }
+      })
+    })
+
+  // Province and Country selector
+  window.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll('[data-address-country-select]').forEach(countrySelect => {
+      const countrySelectId = countrySelect.dataset.addressCountrySelect;
+      countrySelectId && new Shopify.CountryProvinceSelector(
+        `address__country-edit-${countrySelectId}`,
+        `address__state-edit-${countrySelectId}`,
+        {
+          hideElement: `province-selector-${ countrySelectId }`
+        }
+      );
+    })
+
+    new Shopify.CountryProvinceSelector(
+      'address__country-add',
+      'address__state-add',
+      {
+        hideElement: 'province-selector-add'
+      }
+    );
+  })
+
+  // Delete address
+  document.querySelectorAll("#action__delete-btn").forEach(deleteBtn => {
+    deleteBtn.addEventListener('click', (e) => {
+      const deleteStatus = confirm("Are you sure to delete this?!")
+      if(deleteStatus){
+        if(e.target.parentElement.classList.contains("address-delete-form")){
+          e.target.parentElement.submit()
+        }
+      }
+    })
+  })
+
+  const stateSelects = document.querySelectorAll('select[data-state-filter]');
+  
+  const selectChildMutation = new MutationObserver(entries => {
+    stateSelects.forEach(i => {
+      i.forEach(option => {
+        if(option.value.includes("Armed")){
+          option.remove();
+        }
+      })
+    })
+  })
+
+  stateSelects.forEach(select => {
+     selectChildMutation.observe(select, { childList: true });
+  })
+  
+</script>
+
+{% schema %}
+{
+  "name": "Addresses",
+  "tag": "section",
+  "class": "section-addresses",
+  "settings": [],
+  "blocks": []
+}
+{% endschema %}

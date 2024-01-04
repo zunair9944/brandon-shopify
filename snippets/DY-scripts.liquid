@@ -1,0 +1,292 @@
+{%- assign PROJECT_ID =  "8780149" -%}
+
+<link rel="preconnect" href="//cdn.dynamicyield.com">
+<link rel="preconnect" href="//st.dynamicyield.com">
+<link rel="preconnect" href="//rcom.dynamicyield.com">
+<link rel="dns-prefetch" href="//cdn.dynamicyield.com">
+<link rel="dns-prefetch" href="//st.dynamicyield.com">
+<link rel="dns-prefetch" href="//rcom.dynamicyield.com">
+{%- liquid 
+    assign type = false
+    assign data = false
+
+    if template.name == 'index'
+        assign type = 'HOMEPAGE'
+    elsif template.name == 'product'
+        assign type = 'PRODUCT'
+        assign data = product.selected_or_first_available_variant.id
+    elsif template.name == 'collection'
+        assign collection_data = collection.title
+        if current_tags
+            assign joinTags = current_tags | join: "+"
+            assign collection_data = collection.title | append: '/' | append: joinTags
+        endif
+        assign type = 'CATEGORY'
+        assign data = collection_data
+    elsif template.name == 'cart'
+        assign type = 'CART'
+        assign data = cart.items | map: 'variant_id' | uniq | join: ','
+    else
+        assign type = 'OTHER'
+    endif
+    -%}
+
+<script>
+    // DY.recommendationContext = {type: 'HOMEPAGE', lng: 'en_GB'}; // example for Multilingual Support
+    window.DY = window.DY || {}; 
+    DY.recommendationContext = {type: '{{ type }}'{% if template.name == 'cart' or data and data != blank %}, data: {% if template.name == 'cart' %}"{{ data }}".split(','){% else %}['{{ data }}']{% endif %}{% endif %}};
+</script>
+
+<script type="text/javascript" src="//cdn.dynamicyield.com/api/{{PROJECT_ID}}/api_dynamic.js"></script>
+<script type="text/javascript" src="//cdn.dynamicyield.com/api/{{PROJECT_ID}}/api_static.js"></script>
+
+{%- if customer -%}
+<script>
+    if(!sessionStorage.getItem("shopify_customer")){
+        sessionStorage.setItem("shopify_customer", "{{ customer.id }}");
+        DY.API("event", {
+            name: "Login",
+            properties: {
+                dyType: "login-v1",
+                cuid: '{{ customer.id }}',
+                cuidType: 'userId',
+                hashedEmail: DYO.dyhash.sha256("{{ customer.email }}".toLowerCase())
+            }
+        });
+    }
+</script>
+{%- else -%}
+<script>
+   sessionStorage.removeItem("shopify_customer")
+</script>
+{%- endif -%} 
+
+<script>
+        {%- comment -%} Add Newsletter event if needed.
+        window.addEventListener("klaviyoForms", function(e) {
+            // console.log(e.detail.formId) // to identify form id
+            const formID = "SQe2Qj"
+            if (e.detail.type == 'submit' && e.detail.formId === formID) {
+                DY.API("event", {
+                    name: "Newsletter Subscription",
+                    properties: {
+                        dyType: "newsletter-subscription-v1",
+                        hashedEmail: DYO.dyhash.sha256(`${e.detail.metaData['$email']}`.toLowerCase())
+                    }
+                })
+            }
+        });
+        {%- endcomment -%}
+
+    class DYEvents {
+
+        constructor(cartEndpoint) {
+            this.xmlHttpReplacement()
+            this.fetchReplacement()
+            this.cartObject = null;
+
+            window.DY_AddToCart = this.DY_AddToCart
+            fetch('/cart.js').then(resp => resp.json()).then(data => this.setCartObject(data));
+        }
+
+
+        setCartObject(data){
+            this.cartObject = data
+        }
+      
+        async getCartObject(){
+          return await fetch('/cart.js').then(resp => resp.json())
+        //return this.cartObject && this.cartObject.token ? this.cartObject : await fetch('/cart.js').then(resp => resp.json());
+        }
+
+        
+        /*
+        * Helper methods
+        */
+        cartObjectProcessor(cartItems){
+            if(!cartItems || !cartItems.length) return null;
+            let cartData = []
+            cartItems.forEach(item => {
+                const cartItemObject = {
+                    productId: item.variant_id+'',
+                    quantity: item.quantity,
+                    itemPrice: Number((item.price/100).toFixed(2))
+                }
+                cartData.push(cartItemObject)
+            });
+            return cartData
+        }
+
+        /**
+         * DY API CAll
+        */
+        DY_Processor(props){
+            if(!window.DY) return null;
+            window.DY.API("event", {
+                name: "Add to Cart",
+                properties: props
+            });
+            console.log('DY EVENT', {
+                name: "Add to Cart",
+                properties: props
+            })
+        }
+
+        /**
+         * DY Add to cart method
+         * quantity ~ Integer
+         * productObject ~ Shopify product object
+         * cartObject ~ Shopify cart object // optional, if not passed data will be fetched from cart.js endpoint. (extra request)
+        */
+        DY_AddToCart(quantity = 1, productObject, cartObject){
+            if (!productObject || !productObject.variant_id) return null;
+            const { variant_id, price } = productObject
+            let props = {
+                dyType: "add-to-cart-v1",
+                productId: variant_id,
+                quantity: quantity ? quantity : 1,
+                value: Number((quantity * price/100).toFixed(2)),
+            }
+            if(cartObject && cartObject.items && cartObject.items.length){
+                props['cart'] = this.cartObjectProcessor(cartObject.items);
+                props['currency'] = cartObject.currency
+                this.setCartObject(cartObject)
+                this.DY_Processor(props)
+                
+            }else{
+                fetch('/cart.js')
+                .then(response => response.json())
+                .then(data => {
+                    props['cart'] = this.cartObjectProcessor(data.items);
+                    if(data.currency){
+                        props['currency'] = data.currency
+                    }
+                  	this.setCartObject(data)
+                    this.DY_Processor(props)
+                });
+            }
+           
+        }
+        
+        /**
+         * Calculate the difference in quantity to determine DY add to cart event
+         * **/
+        calculateDifference(oldCartData, response){
+            function mergeSameVariants(cart){
+                let merged_data = {}
+                cart.items.forEach(item => {
+                    merged_data[item.variant_id] = {
+                        "variant_id": item.variant_id,
+                        "price": item.price,
+                        "quantity" : merged_data[item.variant_id] && merged_data[item.variant_id].quantity ? merged_data[item.variant_id].quantity + item.quantity : item.quantity
+                    }
+                })
+                return merged_data;
+            }
+
+            function processor(oldCartData, newCartData){
+                if(!newCartData && !newCartData.token) return null;
+                const merged_oldCartData = mergeSameVariants(oldCartData)
+                const merged_newCartData = mergeSameVariants(newCartData)
+                const key = "variant_id";
+                const newItems = [...new Set(newCartData.items.map(item => item[key]))]
+                
+                if(oldCartData.items && oldCartData.items.length){
+                    Object.values(merged_oldCartData).forEach(oldProduct => {
+                        if(newItems.includes(oldProduct[key])){
+                            const itemIndex = newItems.indexOf(oldProduct[key]);
+                            if (itemIndex !== -1) {
+                                newItems.splice(itemIndex, 1);
+                            }
+                            const updatedProduct = Object.values(merged_newCartData).find(item => item[key] === oldProduct[key])
+                            if(updatedProduct.quantity > oldProduct.quantity){
+                                const difference = updatedProduct.quantity - oldProduct.quantity
+                                _this.DY_AddToCart(difference, updatedProduct, newCartData)
+                            }
+                        }
+                    })
+                    if(newItems && newItems.length){
+                        Object.values(merged_newCartData).forEach(item => {
+                            newItems.forEach(newItem => {
+                                if(newItem === item[key]){
+                                    _this.DY_AddToCart(item.quantity, item, newCartData)
+                                }
+                            })
+                        })
+                    }
+                }else{
+                    Object.values(merged_newCartData).forEach(item => {
+                        _this.DY_AddToCart(item.quantity, item, newCartData)
+                    })
+                }
+              _this.setCartObject(newCartData)
+             
+            }
+            if(oldCartData && !oldCartData.token) return null;
+            const _this = this
+            if(response && response.token){
+                processor(oldCartData, response)
+            }else{
+                fetch('/cart.js').then(response => response.json())
+                .then(data => {
+                    processor(oldCartData, data)
+                })
+            }
+            
+        }
+
+
+        /**
+         * XML HTTP Request interceptor
+        */
+        xmlHttpReplacement(){
+            const _this = this
+            const send = window.XMLHttpRequest.prototype.send;
+            async function sendReplacement(data){
+                if(this._url !== "/cart/add.js" && this._url !== "/cart/change.js" && this._url !== "/cart/update.js") return send.apply(this, arguments);
+                if(this.onreadystatechange) {
+                    this._onreadystatechange = this.onreadystatechange;
+                }          
+               	this._oldCartData = await _this.getCartObject();
+
+                this.onreadystatechange = onReadyStateChangeReplacement;
+                return send.apply(this, arguments);
+            }
+            function onReadyStateChangeReplacement() {
+                if(this.readyState == XMLHttpRequest.DONE){
+                   const response = JSON.parse(this.response)
+                   if (!response) return null;
+                   _this.calculateDifference(this._oldCartData, response)
+                }
+            
+                if(this._onreadystatechange) {
+                    return this._onreadystatechange.apply(this, arguments);
+                }
+            }
+
+            window.XMLHttpRequest.prototype.send = sendReplacement
+        }
+
+        /**
+         * Fetch Request interceptor
+        */
+        fetchReplacement() {
+            const _this = this
+            const { fetch: originalFetch } = window;
+            window.fetch =  async (...args) => {
+                const [resource, config] = args;
+                if(resource !== "/cart/add.js" && resource !== "/cart/change.js" && resource !== "/cart/update.js") return await originalFetch(resource, config);
+               
+                const oldCartData = await this.getCartObject();
+                const response = await originalFetch(resource, config);
+                const clonedResponse = response.clone();
+                clonedResponse.json().then((data) => {
+                    _this.calculateDifference(oldCartData, data)
+                })
+                return response;
+            }
+        };
+    }
+    
+    new DYEvents()
+</script>

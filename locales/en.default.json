@@ -1,0 +1,277 @@
+{
+  "general": {
+    "breadcrumbs": {
+      "home": "Home",
+      "account": "Account",
+      "search_result": "Search Result",
+      "my_account": "My Account",
+      "sitemap": "Sitemap"
+    },
+    "meta": {
+      "tags": "Tagged \"{{ tags }}\"",
+      "page": "Page {{ page }}"
+    }
+  },
+  "accessibility": {
+    "skip_to_text": "Skip to content",
+    "sidebar_menu": "Sidebar menu"
+  },
+  "templates": {
+    "cart": {
+      "bag": "Bag",
+      "increase": "Increase",
+      "decrease": "Decrease",
+      "remove": "Remove",
+      "shipping_taxes_at_checkout": "Shipping & taxes calculated at checkout",
+      "subtotal": "Subtotal",
+      "total": "Total",
+      "checkout": "Checkout",
+      "cart_error": "There was an error while updating your bag. Please try again.",
+      "cart_quantity_error": "Max quantity available in bag",
+      "view_cart": "View shopping bag",
+      "item_added_to_cart": "Item added to your bag"
+    },
+    "account": {
+      "account": "Account"
+    },
+    "search": {
+      "search": "Search"
+    },
+    "account_form": {
+      "account_form_labels": {
+        "form_title_label": "Account Form title"
+      },
+      "account_form_errors": {
+        "email_error": "Invalid email address",
+        "password_error": "Invalid password",
+        "pasword_confirm_error": "Password should match!",
+        "account_newaddress_form_error": "Invalid input field, please fill out correctly!"
+      },
+      "account_login_title": "my account",
+      "account_login_instruction": "Please enter your credentials below to login.",
+      "account_login_button": "Log In",
+      "account_login_suggestion": "Don't have an account?",
+      "account_login_email": "Email",
+      "account_login_pwd": "Password",
+      "account_login_forgotpwd": "Forgot Password?",
+      "account_createaccount_firstname": "First name",
+      "account_createaccount_lastname": "Last name",
+      "account_createaccount_title": "Create an account",
+      "account_createaccount_btn": "Create",
+      "account_createaccount_shorttitle": "Create",
+      "account_createaccount_newsletter": "Subscribe to our Newsletter",
+      "account_createaccount_instruction": "Create an account for a faster checkout and exclusive offers.",
+      "account_createaccount_suggestion": "Already have an account?",
+      "account_forgot_pwd_title": "forgot Password",
+      "account_forgot_pwd_success": "We've sent you an email with a link to update your password.",
+      "account_forgot_pwd_instruction1": "Please enter the email address associated with your account.",
+      "account_forgot_pwd_instruction2": "You will shortly recieve an email to reset your password.",
+      "account_forgot_pwd_instruction3": "If the email address is associated with the account, you’ll receive an email with instructions to reset your password.",
+      "account_forgot_pwd_button": "Submit",
+      "account_forgot_pwd_cancel": "Cancel",
+      "account_reset_pwd_title": "Reset Password",
+      "account_activate_account_title": "Activate account",
+      "account_activate_account_intro": "Enter a password for your account",
+      "account_reset_pwd_instruction": "Enter a new password for your account.",
+      "account_reset_pwd_newpwd": "New Password",
+      "account_reset_pwd_confirmpwd": "Confirm Password",
+      "account_password_requirements": "Password must be at least 5 characters"
+    },
+    "account_dashboard": {
+      "account_sidebar": {
+        "account_sidebar_welcome": "Welcome",
+        "account_sidebar_dash_t": "Account Dashboard",
+        "account_sidebar_add_t": "Address book",
+        "account_sidebar_gift_t": "Gift Card Balance",
+        "account_sidebar_wish_t": "Wishlist",
+        "account_sidebar_log_t": "Log Out"
+      },
+      "account_content": {
+        "account_dash_subtitle": "Account",
+        "account_defaddress_subtitle": "Default Address",
+        "account_add_address_subtitle": "Additional Addresses",
+        "account_noaddress_indicator": "You have no address in your address book.",
+        "account_address_counter": "Address",
+        "account_address_delete": "Delete",
+        "account_address_edit": "Edit",
+        "account_address_addnew": "Add New Address",
+        "account_address_edit_title": "Edit Address",
+        "account_address_edit_submit": "Submit",
+        "account_address_cancel": "Cancel",
+        "account_vips_subtitle": "Vip Status",
+        "account_newsl_subtitle": "Newsletter",
+        "account_contact_title": "Contact Information",
+        "account_member_title": "Member",
+        "account_nodefaultadd_msg": "You have no address in your address book.",
+        "account_viewedit_btn": "View\/edit Address",
+        "account_subscription_edit": "Edit your subscription",
+        "account_subscription_subscribe": "Subscribe",
+        "account_vipstatus_indicator1": "Coming Soon",
+        "account_vipstatus": "VIP",
+        "account_vipstatus_indicator3": "You have reached VIP status!",
+        "account_vipstatus_perk": "VIP Status Perks",
+        "account_vipstatus_perk_item1": "Shop new collections early or early access to new upcoming collections.",
+        "account_vipstatus_perk_item2": "Specialized brand gifts for birthdays and holidays.",
+        "account_orders_title": "Recent Orders",
+        "account_noorders_indicator": "You haven't placed any orders yet.",
+        "account_thead1": "Order ",
+        "account_thead2": "Date",
+        "account_thead3": "Payment Status",
+        "account_thead4": "Fulfillment Status",
+        "account_thead5": "Total"
+      }
+    },
+    "address_form": {
+      "form_fname": "First name",
+      "form_lname": "Last name",
+      "form_address1": "Address",
+      "form_address2": "Apartment, Suite, etc",
+      "form_city": "City",
+      "form_countryreg": "Country\/Region",
+      "form_state": "State",
+      "form_zip": "ZIP Code",
+      "form_phone": "Phone",
+      "form_setdef": "Set as default address"
+    },
+    "404": {
+      "404_heading": "404 NOT found",
+      "404_redirect": "back to home",
+      "404_text_title": "Summer sun",
+      "404_text_content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Odio semper at ullamcorper tempor risus risus, viverra pharetra, sed. Nibh venenatis porta varius eu vitae bibendum.",
+      "404_shop_all": "Shop All"
+    },
+    "password": {
+      "encouragement": "Great things coming soon lorem ipsum dolor sit amet. consectetur adipiscing elit. ",
+      "days": "Days",
+      "hours": "Hours",
+      "mins": "Minutes",
+      "secs": "Seconds",
+      "storefront_password": "Password",
+      "storefront_enter": "Enter",
+      "storefront_link": "Enter Using Password"
+    },
+    "order": {
+      "order_details": {
+        "order_back": "Back",
+        "order_txt": "Order",
+        "order_track_txt": "Track order",
+        "order_start_return_txt": "Start a return",
+        "order_order_info": "Order Information",
+        "order_order_billing_address": "Billing address",
+        "order_order_shipping_address": "Shipping address",
+        "order_order_fulfillment_status": "Fulfillment Status",
+        "order_order_payment_status": "Payment Status",
+        "order_order_table_product": "Products",
+        "order_order_table_price": "Price",
+        "order_order_table_quantity": "QTY",
+        "order_order_table_quantity_cap": "Qty",
+        "order_order_table_total": "Total",
+        "order_order_summary_subtotal": "Subtotal",
+        "order_order_summary_tax": "Tax",
+        "order_order_summary_discount": "Discount",
+        "order_order_summary_shipping": "Shipping",
+        "order_order_summary_shipping_free": "Free",
+        "order_total_duties": "Duties",
+        "order_cancelled_html": "Order Cancelled on {{ date }}",
+        "order_cancelled_reason": "Reason: {{ reason }}"
+      }
+    },
+    "collection": {
+      "sort_by": "Sort by",
+      "no_products_in_collection": "Sorry, no products found in this collection",
+      "shop_all": "Shop All",
+      "filters": "Filters",
+      "sort": "Sort"
+    },
+    "shopify": {
+      "checkout": {
+        "shipping_errors": {
+          "shipping_method_not_available_updated": {
+            "other": "One or more items in your bag are not able to ship to your location. Please note we are unable to ship to P.O. boxes or Military APO\/FPO addresses."
+          }
+        }
+      }
+    }
+  },
+  "products": {
+    "labels": {
+      "coming_soon": "Coming soon",
+      "pre_order": "Pre-order",
+      "sold_out": "Sold out"
+    },
+    "product": {
+      "product_variants": "Product Variants",
+      "sold_out": "Sold out",
+      "add_to_cart": "Add to bag",
+      "unavailable": "Unavailable",
+      "description": "Description",
+      "notify_me": "Notify Me When Available",
+      "coming_soon_notify_me": "Notify Me When Available"
+    },
+    "back_in_stock_modal": {
+      "notify_me": "Notify Me",
+      "email": "Email Address",
+      "variant": "Variant",
+      "add_list": "Add me to your email list"
+    },
+    "size_chart": {
+      "product_measurements": "Product measurements",
+      "how_to_measure": "How to Measure",
+      "size_conversion": "Size Conversion",
+      "in": "IN",
+      "cm": "CM",
+      "button_title": "Size guide",
+      "modal_title": "Size guide"
+    }
+  },
+  "about": {
+    "video": {
+      "play": "play",
+      "pause": "pause"
+    }
+  },
+  "shopify": {
+    "checkout": {
+      "shipping_errors": {
+        "shipping_method_not_available": "One or more items in your bag are not able to ship to your location. Please note we are unable to ship to P.O. boxes or Military APO\/FPO addresses."
+      },
+      "general": {
+        "cart": "Bag",
+        "back_to_cart": "Return to bag"
+      },
+      "stock": {
+        "removed_from_cart_notice": "Removed from bag",
+        "remove_from_cart_button_label": "Remove from bag",
+        "go_back_to_cart_button_label": "Go back to my bag"
+      },
+      "order_summary": {
+        "shopping_cart_label": "Shopping bag"
+      },
+      "failed_payment": {
+        "return_to_cart_button_label": "Return to bag"
+      },
+      "marketing": {
+        "unsubscribe": {
+          "description": "You won't receive any more reminders from us."
+        }
+      },
+      "change_country": {
+        "cart_updated_based_on_country": "Your bag has been updated based on shiping country."
+      }
+    },
+    "notices": {
+      "cart": {
+        "only_n_items_available": "You can only add any {{ count }} {{ name }} to your bag.",
+        "too_many_items_in_cart": "You can't add any more {{ name }} to your bag.",
+        "all_items_in_cart": "All {{ count }} {{ name }} are in your bag.",
+        "empty_update": "Cannot update empty bag.",
+        "generic_error": "Bag error",
+        "too_many_line_items_error": "Your bag can't contain more than {{max}} items.",
+        "changed": "Bag changed"
+      }
+    },
+    "page_titles": {
+      "shopping_cart": "Bag"
+    }
+  }
+}

@@ -1,0 +1,112 @@
+{%- render 'stylesheet', name: 'wishlist' -%}
+
+<div class="wishlist__heading">
+  <h1>{%- render 'italic-first-word', text: page.title -%}</h1>
+</div>
+<div class="wishlist__container">
+  {%- render "wishlist-snippet" -%}
+</div> 
+
+<script type="text/javascript">
+   (() => {
+    const productMetaObserver = new MutationObserver(function () {
+      if (document.querySelector(".swym-variant-title")) {
+        productMetaObserver.disconnect()
+        updateProductMeta();
+      }
+    });
+
+    const notificationObserver = new MutationObserver(function () {
+      if (
+        document.querySelector(
+          ".swym-wishlist-notifications-container .swym-details"
+        )
+      ) {
+        notificationObserver.disconnect();
+        window.liquidAjaxCart?.cartRequestUpdate &&
+        window.liquidAjaxCart?.cartRequestUpdate(
+          {},
+          {
+            lastComplete: () => {
+              observeNotifications();
+            },
+          }
+        );
+      }
+    });
+
+    observeNotifications();
+
+    function observeNotifications() {
+      notificationObserver.observe(document, { subtree: true, childList: true });
+    }
+
+    const wishlistImagesObserver = new MutationObserver(function () {
+      if (
+        document.querySelector(".swym-wishlist-list-card") &&
+        window.innerWidth > 768
+      ) {
+
+        wishlistImagesObserver.disconnect()
+        updateWishlistImages();
+      }
+    });
+
+    observeWishlistImages();
+
+
+    function observeProductMeta() {
+      productMetaObserver.observe(document, {subtree: true, childList: true})
+    }
+
+    function updateProductMeta() {
+      document.querySelectorAll(".swym-product-final-price").forEach(element => {
+        let transformedElement = element.parentNode.querySelector('.swym-product-final-price-transformed');
+        if (!transformedElement) {
+          transformedElement = document.createElement('DIV');
+          transformedElement.classList.add('swym-product-final-price-transformed');
+          element.insertAdjacentElement('afterend', transformedElement);
+        }
+        transformedElement.textContent = element.textContent.replaceAll('CAD', '') + ' ' + window.Shopify?.currency?.active;
+      });
+      observeProductMeta();
+    }   
+
+    function generateWishlistImages(products) {
+      let html = "";
+      products.forEach((product) => {
+        if(product.iu) {
+          html += `<div class="swym-wishlist-image-wrapper"><img src="${product.iu}" class="swym-wishlist-image" alt="${product.dt}"></div>`;
+        } else {
+          html += `<div class="swym-wishlist-image-wrapper"></div>`;
+        }
+      });
+      return html;
+    }
+
+
+    function updateWishlistImages() {
+      const elsWishlistCard = document.querySelectorAll(".swym-wishlist-list-card");
+      const lists = _swat?.ui?.Store?.getState()?.wishlists?.lists?.content;
+      elsWishlistCard?.forEach((card) => {
+        const cardName = card.getAttribute("aria-label");
+        const wishlist = lists.find((x) => x.lname === cardName);
+        const elImagesWrapper = card.querySelector(".swym-wishlist-images");
+        if (
+          wishlist &&
+          wishlist.listcontents.length >= 4 &&
+          elImagesWrapper.childElementCount < 4
+        ) {
+          elImagesWrapper.innerHTML = generateWishlistImages(
+            wishlist?.listcontents.slice(0, 4)
+          );
+        }
+      });
+    }
+
+    function observeWishlistImages() {
+      wishlistImagesObserver.observe(document, { subtree: true, childList: true });
+    }
+
+  })()
+</script>

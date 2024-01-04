@@ -1,0 +1,41 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-page-contact",
+      "blocks": {
+        "a5097534-d116-4ca8-9c8d-429d32d8a9a6": {
+          "type": "contact-email",
+          "settings": {
+            "name": "Customer Service",
+            "email": "info@brandonblackwood.com"
+          }
+        },
+        "9cfb5de4-75ba-4ecf-8559-7aa0666dd0ce": {
+          "type": "contact-email",
+          "settings": {
+            "name": "Press",
+            "email": "pr@brandonblackwood.com"
+          }
+        },
+        "6396f26d-bf8f-4f45-a186-d95e274f1316": {
+          "type": "contact-email",
+          "settings": {
+            "name": "Wholesale \/ Partnerships",
+            "email": "imani@brandonblackwood.com"
+          }
+        }
+      },
+      "block_order": [
+        "a5097534-d116-4ca8-9c8d-429d32d8a9a6",
+        "9cfb5de4-75ba-4ecf-8559-7aa0666dd0ce",
+        "6396f26d-bf8f-4f45-a186-d95e274f1316"
+      ],
+      "settings": {
+        "contact_form_html": "<div class=\"pxFormGenerator\" id=\"BEH93Wmqijz4t78Bct-CNw\"><\/div>"
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

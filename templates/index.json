@@ -1,0 +1,250 @@
+{
+  "sections": {
+    "1659911681216007d7": {
+      "type": "banner",
+      "blocks": {
+        "e70c7382-a0fb-40c4-8f2d-45c85a8fe4c5": {
+          "type": "button",
+          "settings": {
+            "text": "SHOP ALL ESR",
+            "link": "shopify:\/\/collections\/esr-collection"
+          }
+        },
+        "7846bb11-3502-4958-adc1-9e20d9e474a2": {
+          "type": "button",
+          "disabled": true,
+          "settings": {
+            "text": "Outerwear",
+            "link": "shopify:\/\/collections\/all-outerwear"
+          }
+        }
+      },
+      "block_order": [
+        "e70c7382-a0fb-40c4-8f2d-45c85a8fe4c5",
+        "7846bb11-3502-4958-adc1-9e20d9e474a2"
+      ],
+      "settings": {
+        "desktop_image": "shopify:\/\/shop_images\/ESR_VASE.png",
+        "mobile_image": "shopify:\/\/shop_images\/IMG_3758_16x9_bdb6455c-ea48-4b2e-ab0f-9edbd4b45bb8.jpg",
+        "video_url": "",
+        "media_brightness": 0.8,
+        "eyebrow": "",
+        "heading": "THE ESR VASE",
+        "text": "Introducing The ESR Vase, a Brandon Blackwood Foundation item.",
+        "toggle_mobile_text": false,
+        "text_alignment": "left",
+        "content_box_alignment": "bottom_left",
+        "copy_color_desktop": "white",
+        "copy_color_mobile": "white"
+      }
+    },
+    "166091391150569183": {
+      "type": "products-list",
+      "settings": {
+        "title": "Shop All",
+        "text_color": "",
+        "bg_color": "",
+        "collection": "all",
+        "footer_button_text": "Shop All",
+        "footer_button_link": "shopify:\/\/collections\/all"
+      }
+    },
+    "1660913957605e2d0e": {
+      "type": "image-with-text",
+      "blocks": {
+        "3a78adcf-56ac-44c5-bef6-41714046288c": {
+          "type": "image",
+          "settings": {
+            "image": "shopify:\/\/shop_images\/BB-HOLIDAY-SHOT14-053B.jpg",
+            "bg_color": "",
+            "text": "",
+            "link": ""
+          }
+        },
+        "ebbab0ea-ca11-4af2-acc9-5f4b8bf99142": {
+          "type": "image",
+          "settings": {
+            "image": "shopify:\/\/shop_images\/BB-HOLIDAY-SHOT10-005C.jpg",
+            "bg_color": "",
+            "text": "",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "3a78adcf-56ac-44c5-bef6-41714046288c",
+        "ebbab0ea-ca11-4af2-acc9-5f4b8bf99142"
+      ],
+      "settings": {
+        "layout_style": "3",
+        "bg_color": "#10244b",
+        "copy_color": "#ffffff",
+        "eyebrow": "Brandon's Picks",
+        "heading": "HOLIDAYS",
+        "text": "Shop Brandon's favorite items for the holidays.",
+        "button_text": "Shop the collection",
+        "button_link": "shopify:\/\/collections\/bb-gift-guide"
+      }
+    },
+    "1661468757154b5b9d": {
+      "type": "shop-the-look",
+      "disabled": true,
+      "settings": {
+        "bg_image_desktop": "shopify:\/\/shop_images\/6abba8cf16784e0f3e4fafea1f00a5b6-2_bd6bb957-585b-4366-a284-cf499e6c746c.png",
+        "bg_image_mobile": "shopify:\/\/shop_images\/Product_Carousel_Color.png",
+        "bg_color": "#d4e095",
+        "title": "Go green",
+        "button_text": "Shop all",
+        "button_link": "shopify:\/\/collections\/all",
+        "collection": "avex-group-test"
+      }
+    },
+    "1660914394c04030b3": {
+      "type": "image-with-text",
+      "blocks": {
+        "7da03c29-752a-49f0-bee9-272310a851be": {
+          "type": "image",
+          "settings": {
+            "image": "shopify:\/\/shop_images\/KiraPuffer_BLACK_ALT_021_1_86bd60b0-aaf5-42c8-a289-30b0132d8022.jpg",
+            "bg_color": "#f5b1eb",
+            "text": "The Kira",
+            "link": "shopify:\/\/products\/the-kira-black"
+          }
+        },
+        "c8b35442-171f-4f1e-a052-b785f385c864": {
+          "type": "image",
+          "settings": {
+            "image": "shopify:\/\/shop_images\/SicakCoat_CAMEL_ALT_017_8d131a78-c181-4b3e-b0f0-34ebd360534c.jpg",
+            "bg_color": "#09b0d6",
+            "text": "The Sicak",
+            "link": "shopify:\/\/products\/the-sicak"
+          }
+        },
+        "437eeebe-7081-4c67-a97e-ce010ecf128c": {
+          "type": "image",
+          "settings": {
+            "image": "shopify:\/\/shop_images\/HataTeddieForest_GREEN_ALT_005_1_e222132b-9515-404a-9808-1accbc5cb0ac.jpg",
+            "bg_color": "#0aa652",
+            "text": "The Hata",
+            "link": "shopify:\/\/collections\/the-hata-1"
+          }
+        },
+        "3e3c4fe1-c959-4dba-bab8-54725a34eb91": {
+          "type": "image",
+          "settings": {
+            "image": "shopify:\/\/shop_images\/SenaTrench_BLACK_ALT_014_1_f022d508-07ce-4a19-b4c8-95aac9e162bf.jpg",
+            "bg_color": "#f1ada9",
+            "text": "The Sena",
+            "link": "shopify:\/\/products\/the-sena-black"
+          }
+        }
+      },
+      "block_order": [
+        "7da03c29-752a-49f0-bee9-272310a851be",
+        "c8b35442-171f-4f1e-a052-b785f385c864",
+        "437eeebe-7081-4c67-a97e-ce010ecf128c",
+        "3e3c4fe1-c959-4dba-bab8-54725a34eb91"
+      ],
+      "settings": {
+        "layout_style": "2",
+        "bg_color": "",
+        "copy_color": "",
+        "eyebrow": "Fall Collection",
+        "heading": "NEW COAT STYLES",
+        "text": "Meet your favorite fall new styles.",
+        "button_text": "Shop all",
+        "button_link": "shopify:\/\/collections\/all-outerwear"
+      }
+    },
+    "16609146943b222fa4": {
+      "type": "banner",
+      "blocks": {
+        "6dcc85f1-ecc3-42aa-b53f-b7b0b5987cb9": {
+          "type": "button",
+          "settings": {
+            "text": "Shop All",
+            "link": "shopify:\/\/collections\/all"
+          }
+        }
+      },
+      "block_order": [
+        "6dcc85f1-ecc3-42aa-b53f-b7b0b5987cb9"
+      ],
+      "settings": {
+        "desktop_image": "shopify:\/\/shop_images\/L1660987_FINAL_16X9_fab365e2-2eba-4601-974c-e37c80bd5369.jpg",
+        "mobile_image": "shopify:\/\/shop_images\/L1660987_FINAL.jpg",
+        "video_url": "",
+        "media_brightness": 1,
+        "eyebrow": "Your new fall favorites",
+        "heading": "SHOP FALL",
+        "text": "",
+        "toggle_mobile_text": false,
+        "text_alignment": "left",
+        "content_box_alignment": "bottom_right",
+        "copy_color_desktop": "white",
+        "copy_color_mobile": "white"
+      }
+    },
+    "1660914638fd60ec33": {
+      "type": "image-with-text",
+      "disabled": true,
+      "blocks": {
+        "96590a6e-507d-4158-b26f-a7cebb80ca81": {
+          "type": "image",
+          "settings": {
+            "image": "shopify:\/\/shop_images\/L1660158_F.jpg",
+            "bg_color": "",
+            "text": "",
+            "link": ""
+          }
+        },
+        "2141b107-c14a-44f9-9081-621500645be8": {
+          "type": "image",
+          "settings": {
+            "image": "shopify:\/\/shop_images\/AcrylicVanityClutch_BLACK_FRONT_006.jpg",
+            "bg_color": "",
+            "text": "",
+            "link": "shopify:\/\/collections\/acrylics"
+          }
+        }
+      },
+      "block_order": [
+        "96590a6e-507d-4158-b26f-a7cebb80ca81",
+        "2141b107-c14a-44f9-9081-621500645be8"
+      ],
+      "settings": {
+        "layout_style": "5",
+        "bg_color": "",
+        "copy_color": "",
+        "eyebrow": "",
+        "heading": "Meet The Acrylic Collection",
+        "text": "Vintage inspired collection with bold colors that actually fits your smartphone.",
+        "button_text": "Shop all",
+        "button_link": "shopify:\/\/collections\/acrylics"
+      }
+    },
+    "1661468808e53eeb6e": {
+      "type": "shop-the-look",
+      "disabled": true,
+      "settings": {
+        "bg_image_desktop": "shopify:\/\/shop_images\/565e5e770ba1a616accd94d52bc00b9f_9a4d9233-0d38-4223-b474-05d2c121caaa.png",
+        "bg_image_mobile": "shopify:\/\/shop_images\/wegweg_a0d37c9c-f981-4b97-8394-458b711390b0.png",
+        "bg_color": "#ffd28b",
+        "title": "Shop the look",
+        "button_text": "Shop all",
+        "button_link": "shopify:\/\/collections\/all",
+        "collection": "shop"
+      }
+    }
+  },
+  "order": [
+    "1659911681216007d7",
+    "166091391150569183",
+    "1660913957605e2d0e",
+    "1661468757154b5b9d",
+    "1660914394c04030b3",
+    "16609146943b222fa4",
+    "1660914638fd60ec33",
+    "1661468808e53eeb6e"
+  ]
+}

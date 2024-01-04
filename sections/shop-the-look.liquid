@@ -1,0 +1,163 @@
+{%- render 'stylesheet', name: 'swiper', loading: 'defer' -%}
+{%- render 'stylesheet', name: 'shop-the-look' -%}
+
+{%- liquid
+  assign look = section.settings
+
+  assign bg_image_desktop = look.bg_image_desktop
+  assign bg_image_mobile = look.bg_image_mobile
+  assign bg_color = look.bg_color
+  assign title = look.title | escape
+  assign button_text = look.button_text | escape
+  assign button_link = look.button_link | escape
+  assign collection = look.collection
+  assign has_navigation = false
+
+  if collection.products_count > 3
+    assign has_navigation = true
+  endif
+-%}
+
+<shop-the-look>
+  <div
+    class="look"
+    style="
+      {%- if bg_color != blank and bg_color != 'rgba(0,0,0,0)' -%}
+        --background-color: {{ bg_color }};
+      {%- endif -%}
+    "
+  >
+    <div class="look__image-box">
+      {%- if bg_image_desktop != blank -%}
+        <img src="{{ bg_image_desktop | image_url: width: 900 }}" loading="lazy" class="look__image look__image--desktop" />
+      {%- endif -%}
+
+      {%- if bg_image_mobile != blank -%}
+        <img src="{{ bg_image_mobile | image_url: width: 900 }}" loading="lazy" class="look__image look__image--mobile" />
+      {%- endif -%}
+    </div>
+
+    <div class="look__content">
+      <div class="look__content-header">
+        <div class="look__copy">
+          {%- if title != blank -%}
+            <h2 class="look__title">
+              {%- render 'italic-first-word', text: title -%}
+            </h2>
+          {%- endif -%}
+
+          {%- if button_link != blank and button_text -%}
+            <a href="{{ button_link }}" class="look__button text-1 button-2">
+              <span class="look__button-text button-2__text">{{ button_text }}</span>
+              <img
+                class="look__button-icon button-2__icon"
+                loading="lazy"
+                src="{{ 'icon-right-long.svg' | asset_url }}"
+                height="10"
+              >
+            </a>
+          {%- endif -%}
+        </div>
+        <div class="look__nav">
+          <button class="look__nav-button nav-button button-3" data-direction="prev" type="button">
+            <img
+              height="12"
+              src="{{ 'icon-left-long.svg' | asset_url }}"
+              alt=""
+              class="look__nav-button-icon nav-button__icon"
+            >
+          </button>
+          <button class="look__nav-button nav-button button-3" data-direction="next" type="button">
+            <img
+              height="12"
+              src="{{ 'icon-right-long.svg' | asset_url }}"
+              alt=""
+              class="look__nav-button-icon nav-button__icon"
+            >
+          </button>
+        </div>
+      </div>
+
+      <div class="look__products-box swiper">
+        <ul class="list look__products swiper-wrapper">
+          {%- for product in collection.products -%}
+            <li class="look__product swiper-slide">
+              {%- render 'product-card' with product: product -%}
+            </li>
+          {%- endfor -%}
+        </ul>
+
+        <div class="look__nav--mobile">
+          <button class="look__nav-button nav-button button-3" data-direction="prev" type="button">
+            <img
+              height="12"
+              src="{{ 'icon-left.svg' | asset_url }}"
+              alt=""
+              class="look__nav-button-icon nav-button__icon"
+            >
+          </button>
+          <button class="look__nav-button nav-button button-3" data-direction="next" type="button">
+            <img
+              height="12"
+              src="{{ 'icon-right.svg' | asset_url }}"
+              alt=""
+              class="look__nav-button-icon nav-button__icon"
+            >
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</shop-the-look>
+
+{% schema %}
+{
+  "name": "Shop the Look",
+  "tag": "section",
+  "class": "section-shop-the-look",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "bg_image_desktop",
+      "label": "BG Image Desktop"
+    },
+    {
+      "type": "image_picker",
+      "id": "bg_image_mobile",
+      "label": "BG Image Mobile"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "BG Color"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Default heading"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Default button text"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Shop the Look"
+    }
+  ]
+}
+{% endschema %}

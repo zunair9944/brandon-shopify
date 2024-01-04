@@ -1,0 +1,14 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-collection",
+      "settings": {
+        "tab_menu": "collection-tab-menu",
+        "backup_collection": "coming-soon"
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

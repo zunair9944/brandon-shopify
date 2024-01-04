@@ -1,0 +1,185 @@
+{%- render 'stylesheet', name: 'form' -%}
+
+<div class="account-form">
+  <div data-target="desktop" class="form__image-wrapper">
+    {{ settings.form_image.src | image_url: width: 960, height: 720 | image_tag: class: "form__image", alt: settings.form_image.alt }}
+  </div>
+  <div id="forgot__password-form" class="form__fields-wrapper forgot-password">
+    <account-form>
+      {%- form 'recover_customer_password' , class: 'form' -%}
+        {%- assign recover_success = form.posted_successfully? -%}
+        <div class="form__text--wrapper">
+          <h1 class="form__title">
+            {%- assign heading = 'templates.account_form.account_forgot_pwd_title' | t -%}
+            {%- render 'italic-first-word', text: heading -%}
+          </h1>
+          <p class="form__instruction forgot-password-instruction">
+            {{- 'templates.account_form.account_forgot_pwd_instruction1' | t }}
+            {{ 'templates.account_form.account_forgot_pwd_instruction2' | t }}
+          </p>
+        </div>
+        <div class="input-wrapper">
+          <input
+            required
+            type="email"
+            data-input-type="email"
+            id="customer-recovery-email"
+            name="email"
+            {%- if form.errors -%}
+              aria-invalid="true"
+            {%- endif -%}
+            class="customer__input notrequired"
+          >
+          <label for="customer-recovery-email">{{ 'templates.account_form.account_login_email' | t }}</label>
+        </div>
+        {%- if form.errors -%}
+          <div class="form-error--default">
+            {% render 'icon-alert' %}
+            {{ form.errors | default_errors }}
+          </div>
+        {%- endif -%}
+        <button class="customer__formbtn" type="submit" disabled>
+          {{ "templates.account_form.account_forgot_pwd_button" | t }}
+        </button>
+        <a id="cancel" class="form__options link-hover" href="#login">
+          {{- "templates.account_form.account_forgot_pwd_cancel" | t -}}
+        </a>
+      {%- endform -%}
+    </account-form>
+  </div>
+  <div class="form__fields-wrapper" id="login-form">
+    <account-form>
+      {%- form 'customer_login' , class: 'form' -%}
+        <div class="form__text--wrapper">
+          <h1 class="form__title">
+            {%- assign heading = 'templates.account_form.account_login_title' | t -%}
+            {%- render 'italic-first-word', text: heading -%}
+          </h1>
+          <p class="form__instruction">{{ 'templates.account_form.account_login_instruction' | t }}</p>
+          {% if recover_success == true %}
+            <p class="form__success">{{ 'templates.account_form.account_forgot_pwd_success' | t }}</p>
+          {% endif %}
+        </div>
+        <div class="input-wrapper">
+          <input
+            required
+            type="email"
+            data-input-type="email"
+            id="customer-email"
+            name="customer[email]"
+            {%- if form.errors -%}
+              aria-invalid="true"
+            {%- endif -%}
+            class="customer__input notrequired"
+          >
+          <label for="customer-email">{{ 'templates.account_form.account_login_email' | t }}</label>
+        </div>
+        <div class="input-wrapper">
+          <input
+            required
+            type="password"
+            data-input-type="password"
+            id="customer_password"
+            name="customer[password]"
+            {%- if form.errors -%}
+              aria-invalid="true"
+            {%- endif -%}
+            class="customer__input"
+          >
+          <label for="customer_password">{{ 'templates.account_form.account_login_pwd' | t }}</label>
+        </div>
+        {%- if form.errors -%}
+          <div class="form-error--default">
+            {% render 'icon-alert' %}
+            {{ form.errors | default_errors }}
+          </div>
+        {%- endif -%}
+        <a id="forgot__password" class="form__options link-hover" href="#forgot-password">
+          {{- 'templates.account_form.account_login_forgotpwd' | t -}}
+        </a>
+        <button id="form-submit-btn" disabled class="customer__formbtn" type="submit">
+          {{ "templates.account_form.account_login_button" | t }}
+        </button>
+        <a id="forgot__password" class="create-account--link button-1 button-1--alt" href="{{ routes.account_register_url }}">
+          {{- 'templates.account_form.account_createaccount_title' | t -}}
+        </a>
+      {%- endform -%}
+    </account-form>
+  </div>
+</div>
+
+<script>
+  const forgotBtn = document.querySelector("#forgot__password");
+  const cancelBtn = document.querySelector("#cancel");
+  const forgotPwdForm = document.querySelector("#forgot__password-form");
+  const loginForm = document.querySelector("#login-form");
+
+  function resetForm(forgotPwdStyle, loginFormStyle){
+    forgotPwdForm.style.display = forgotPwdStyle;
+    loginForm.style.display = loginFormStyle;
+
+    document.querySelectorAll(".form").forEach(form => {
+      form.reset();
+    })
+    document.querySelectorAll('.notrequired').forEach(i => {
+      if(i.value.length == 0){
+        i.classList.remove('notrequiredactive');
+      }
+    })
+  }
+  
+  if(window.location.href.includes("#forgot-password") || window.location.href.includes("#recover")){
+    forgotPwdForm.style.display = "block";
+    loginForm.style.display = "none";
+  }
+  else{
+    forgotPwdForm.style.display = "none";
+    loginForm.style.display = "block";
+  }
+
+  document.querySelectorAll('.notrequired').forEach(i => {
+    i.addEventListener('focus', (e) => {
+      e.target.classList.add('notrequiredactive')
+    })
+    i.addEventListener('blur', (e) => {
+      if(e.target.value.length < 1){
+        e.target.classList.remove('notrequiredactive')
+      }
+    })
+  })
+
+  forgotBtn.addEventListener('click', () => {
+    resetForm("block", "none");
+  })
+
+  cancelBtn.addEventListener('click', () => {
+    resetForm("none", "block");
+  })
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const queryResult = new URLSearchParams(window.location.search);
+    const submitButton = document.getElementById("form-submit-btn");
+    if(queryResult.has("redirect")){
+      const redirectURL = window.atob(queryResult.get("redirect"));
+      const hiddenRedirectInput = document.createElement("input");
+      hiddenRedirectInput.value = redirectURL; 
+      hiddenRedirectInput.type = "hidden";
+      hiddenRedirectInput.name = "return_to";
+      function insertAfter(referenceNode, newNode){
+        referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling)
+      }
+      insertAfter(submitButton, hiddenRedirectInput)
+    }
+  })
+  
+</script>
+
+{% schema %}
+{
+  "name": "Login",
+  "tag": "section",
+  "class": "section-login",
+  "settings": [],
+  "blocks": []
+}
+{% endschema %}

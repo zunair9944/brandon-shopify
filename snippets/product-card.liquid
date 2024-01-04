@@ -1,0 +1,143 @@
+{%- liquid
+  assign title = product.title
+  assign subtitle = ''
+
+  for product_option in product.options_with_values
+    if product_option.name == 'Color' or product_option.name == 'Colour'
+      assign subtitle = product_option.selected_value
+    endif
+  endfor
+
+   
+  assign badge = ''
+
+  assign current_variant = product.selected_or_first_available_variant
+
+  assign product_custom_badge = ''
+  assign is_coming_soon = false
+  assign is_preorder = false
+  assign is_stock_notify = true
+  assign is_coming_soon_notify = false
+  assign is_sold_out = false
+  assign no_notify = false
+  assign show_bis_button = false
+
+  for tag in product.tags
+    if tag contains 'COMING SOON'
+      assign is_coming_soon = true
+    elsif tag contains 'Pre-Order'
+      assign is_preorder = true
+    elsif tag contains 'No-Notify'
+      assign is_stock_notify = false
+    elsif tag contains 'badge::'
+      assign tag_string_array = tag | split: '::'
+      assign product_custom_badge = tag_string_array | last | strip | escape
+    elsif tag contains 'prodGroup::'
+      assign group_handle = tag | split: '::' | last
+    endif
+  endfor
+
+  if current_variant.available == false
+    assign is_sold_out = true
+  endif
+
+  if is_sold_out == false or no_notify or is_preorder
+    assign is_stock_notify = false
+  endif
+
+  if is_coming_soon and is_sold_out
+    assign is_coming_soon_notify = true
+    assign is_stock_notify = false
+  endif
+
+  if is_coming_soon
+    assign badge = 'products.labels.coming_soon' | t
+  elsif current_variant.available == false
+    assign badge = 'products.labels.sold_out' | t
+  else
+    assign badge = product_custom_badge
+  endif
+
+  if is_sold_out and is_stock_notify or is_coming_soon_notify
+    assign show_bis_button = true
+  endif
+
+  assign fallback_alt_text = shop.name | append: ' - ' | append: product.title | append: ' - ' | append: subtitle
+
+  assign featured_image = product.featured_image
+  assign featured_image_alt_text = featured_image.alt
+  if featured_image_alt_text == blank
+    assign featured_image_alt_text = fallback_alt_text
+  endif
+
+  assign hover_image = ''
+
+  if product.images[1]
+    assign hover_image = product.images[1]
+  endif
+
+  for image in product.images
+    if image.alt contains '|| hover'
+      assign hover_image = image
+    endif
+  endfor
+
+  assign hover_image_alt_text = hover_image.alt
+  if hover_image_alt_text == blank
+    assign hover_image_alt_text = fallback_alt_text
+  endif
+-%}
+
+<div
+  class="product-card"
+  data-has-hover-image="{%- if hover_image != '' -%}true{%- else -%}false{%- endif -%}"
+>
+  {%- render 'stylesheet', name: 'product-card' -%}
+
+  <div class="product-card__image-box">
+    <button 
+      data-with-epi="true"
+      class="swym-button product-section__wishlist-btn product_{{ product.id }}" 
+      data-swaction="addToWishlist" 
+      data-product-id="{{product.id }}" 
+      data-variant-id="{{product.variants[0].id}}" 
+      data-product-url="{{shop.url}}{{product.url}}"></button>
+    {%- if badge != blank -%}
+      <span class="product-card__badge text-1">{{ badge | escape }}</span>
+    {%- endif -%} 
+
+    {%- if featured_image == blank or featured_image == '' -%}
+      <div class="product-card__image product-card__image--empty"></div>
+    {%- endif -%}
+
+    {%- if featured_image != blank and featured_image != '' -%}
+      {{
+        featured_image
+        | image_url: width: 512
+        | image_tag: preload: true, class: 'product-card__image', loading: 'lazy', alt: featured_image_alt_text
+      }}
+    {%- endif -%}
+
+    {%- if hover_image != blank and hover_image != '' -%}
+      {{
+        hover_image
+        | image_url: width: 512
+        | image_tag: preload: true, class: 'product-card__image--hover', loading: 'lazy', alt: hover_image_alt_text
+      }}
+    {%- endif -%}
+  </div>
+
+  <p class="product-card__copy">
+    <span class="product-card__title">{{ title | escape }}</span>
+    {%- if subtitle != '' -%}
+      <span class="product-card__subtitle">{{ subtitle | escape }}</span>
+    {%- endif -%}
+    <span class="product-card__price">{{ product.price | money }}</span>
+  </p>
+
+  <a href="{{ product.url }}" class="product-card__link">
+    <span class="visually-hidden">{{ product.title | escape }}</span>
+    <span class="visually-hidden">{{ product.description }}</span>
+  </a>
+  {% render 'preorder-now-collection-item', product: product %}
+</div>

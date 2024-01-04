@@ -1,0 +1,131 @@
+{%- render 'stylesheet', name: 'footer' -%}
+{%- render 'tag-script', name: 'footer', loading: 'defer' -%}
+
+{%- liquid
+  assign footer = section.settings
+
+  assign email_block_title = footer.email_block_title
+  assign email_code = settings.klaviyo_newsletter_email_code
+  assign email_placeholder_height = footer.email_placeholder_height
+  assign main_list = footer.main_list
+  assign bottom_block_list = footer.bottom_block_list
+  assign copyright_text = footer.copyright_text
+-%}
+
+<div class="section-footer__block" data-block="email">
+  <div class="section-footer__email">
+    {%- if email_block_title != blank -%}
+      <div class="section-footer__block-title text-1">{{ email_block_title | escape }}</div>
+    {%- endif -%}
+
+    <div
+      class="section-footer__email-code custom-klaviyo-form-wrapper"
+      style="
+        {%- if email_placeholder_height != blank -%}
+          --email-placeholder-height: {{ email_placeholder_height }}px;
+        {%- endif -%}
+      "
+    >
+      {%- if email_code != blank -%}
+        {{ email_code }}
+      {%- endif -%}
+    </div>
+  </div>
+
+  <div class="section-footer__lang-switcher">
+    {%- render 'lang-switcher' -%}
+  </div>
+</div>
+
+<div class="section-footer__block" data-block="link-lists">
+  {%- for link in main_list.links -%}
+    <div class="section-footer__link-list-box">
+      <div class="section-footer__link-list-title section-footer__link-list-title--outside text-1">
+        {{ link.title | escape }}
+      </div>
+
+      <button class="section-footer__link-list-toggler">
+        <span class="section-footer__link-list-title section-footer__link-list-title--in-toggler text-1">
+          {{- link.title | escape -}}
+        </span>
+        <span class="section-footer__link-list-toggler-icon-box">
+          <span data-name="plus" class="section-footer__link-list-toggler-icon">
+            {%- render 'icon-plus' -%}
+          </span>
+          <span data-name="minus" class="section-footer__link-list-toggler-icon">
+            {%- render 'icon-minus' -%}
+          </span>
+        </span>
+      </button>
+
+      <ul class="list section-footer__link-list" data-list="footer-link-list">
+        {%- for link in link.links -%}
+          <li class="section-footer__link-list-item">
+            <a class="section-footer__link-list-item-text text-1" href="{{ link.url }}">{{ link.title | escape }}</a>
+          </li>
+        {%- endfor -%}
+      </ul>
+    </div>
+  {%- endfor -%}
+</div>
+
+<div class="section-footer__block" data-block="lang-switcher">
+  {%- render 'lang-switcher' -%}
+</div>
+
+{%- if bottom_block_list -%}
+  <div class="section-footer__block" data-block="bottom">
+    {%- if copyright_text != blank -%}
+      {%- assign current_year = 'now' | date: '%Y' -%}
+      <span class="copyright-text text-1">{{ copyright_text | replace: '[Y]', current_year }}</span>
+    {%- endif -%}
+    <ul class="list section-footer__bottom-block-list" data-list="footer-bottom-block-list">
+      {%- for link in bottom_block_list.links -%}
+        <li class="bottom-block-list__item">
+          {%- if link.url == '#' -%}
+            <span class="bottom-block-list__item-text text-1">{{ link.title | escape }}</span>
+          {% else %}
+            <a class="bottom-block-list__item-text text-1" href="{{ link.url }}">{{ link.title | escape }}</a>
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Footer",
+  "class": "section-footer",
+  "settings": [
+    {
+      "type": "text",
+      "id": "email_block_title",
+      "label": "Email block title",
+      "default": "Default email block title"
+    },
+    {
+      "type": "number",
+      "id": "email_placeholder_height",
+      "label": "Email form placeholder height"
+    },
+    {
+      "type": "link_list",
+      "id": "main_list",
+      "label": "Main list"
+    },
+    {
+      "type": "link_list",
+      "id": "bottom_block_list",
+      "label": "Bottom list"
+    },
+    {
+      "type": "text",
+      "id": "copyright_text",
+      "label": "Copyright text",
+      "default": "Default copyright text"
+    }
+  ],
+  "blocks": []
+}
+{% endschema %}

@@ -1,0 +1,48 @@
+<div class="product">
+  {%- render 'product-section', product: product, section: section -%}
+</div>
+
+{% schema %}
+{
+  "name": "Product",
+  "tag": "section",
+  "class": "section-product",
+  "blocks": [],
+  "settings": [
+    {
+      "type": "text",
+      "id": "size_guide_title",
+      "label": "Size guide title",
+      "default": "Size guide"
+    },
+    {
+      "type": "textarea",
+      "id": "coming_soon_message",
+      "label": "Coming soon message",
+      "default": "Coming soon"
+    },
+    {
+      "type": "richtext",
+      "id": "shipping_note",
+      "label": "Shipping note",
+      "default": "<p>Free shipping on orders over $250 USD and free returns on all orders. <a href=\"#\">Lear more</a></p>"
+    },
+    {
+      "type": "header",
+      "content": "Klaviyo Modal"
+    },
+    {
+      "type": "textarea",
+      "id": "klaviyo_modal_subtitle",
+      "label": "Modal Subtitle",
+      "default": "We will send you a notification as soon as this product is available."
+    },
+    {
+      "type": "textarea",
+      "id": "klaviyo_modal_success",
+      "label": "Modal Success Message",
+      "default": "Your notification has been registered."
+    }
+  ]
+}
+{% endschema %}

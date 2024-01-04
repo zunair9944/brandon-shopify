@@ -1,0 +1,24 @@
+{% comment %}
+  Renders a Secondary Navigation
+
+  Accepts:
+  - content: {String} HTML string containing list of <li></li>s
+  - name: {String} Label for navigation
+
+  Usage:
+  {%- render 'secondary-navigation', content: content, name: name -%}
+  - add data-active to active link
+{% endcomment %}
+
+{%- style -%}
+  {%- render "css-secondary-navigation.css" -%}
+{%- endstyle -%}
+
+<secondary-navigation class="secondary-navigation">
+  <nav class="secondary-navigation__nav" data-secondary-navigation aria-label="{{ name }}">
+    <div class="secondary-navigation__nav-item" data-current></div>
+    <ul class="secondary-navigation__nav-list" data-secondary-navigation-list>
+      {{ content }}
+    </ul>
+  </nav>
+</secondary-navigation>

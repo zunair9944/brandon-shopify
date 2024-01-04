@@ -1,0 +1,20 @@
+{%- assign menu = linklists[settings.sidebar_menu] -%}
+
+{%- capture content -%}
+  {%- for link in menu.links -%}
+    <li>
+      <a
+        {% if link.active or link.child_active %}
+          data-active
+        {% endif %}
+        href="{{ link.url }}"
+      >
+        {{- link.title -}}
+      </a>
+    </li>
+  {%- endfor -%}
+{%- endcapture -%}
+
+{%- assign nav_name = 'accessibility.sidebar_menu' | t -%}
+
+{%- render 'secondary-navigation', content: content, name: nav_name -%}

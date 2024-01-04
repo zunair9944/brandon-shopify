@@ -1,0 +1,6 @@
+{%- liquid
+  assign first_word = text | split: " " | first
+  assign other_words = text | replace_first: first_word, ""
+  assign total_words = text | split: " " | size
+-%}
+<span class="italic-first-word" data-total-words="{{ total_words }}"><i>{{ first_word }}</i>{{ other_words }}</span>

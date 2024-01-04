@@ -1,0 +1,66 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "settings": {
+        "size_guide_title": "Size guide",
+        "coming_soon_message": "Available to pre-order Monday, December 19th, 9AM EST",
+        "shipping_note": "",
+        "klaviyo_modal_subtitle": "We will send you a notification as soon as this product is available.",
+        "klaviyo_modal_success": "Your notification has been registered."
+      }
+    },
+    "1662383182c80b776d": {
+      "type": "product-recommendations",
+      "settings": {
+        "title": "Explore more",
+        "slider_is_enabled": true,
+        "footer_button_text": "Shop all",
+        "footer_button_link": "shopify:\/\/collections\/all"
+      }
+    },
+    "1662383317502959b0": {
+      "type": "image-with-text",
+      "disabled": true,
+      "blocks": {
+        "6b1cd2e2-2bde-40ca-80a9-0ac5550fc4b9": {
+          "type": "image",
+          "settings": {
+            "image": "shopify:\/\/shop_images\/5f6294489439e4485033efc477f06c3b.jpg",
+            "bg_color": "",
+            "text": "",
+            "link": ""
+          }
+        },
+        "357704a9-fe7b-41eb-94a1-f69dc4b1e906": {
+          "type": "image",
+          "settings": {
+            "image": "shopify:\/\/shop_images\/035e5c95d7db0fdd53ee209535198e1a.jpg",
+            "bg_color": "",
+            "text": "",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "6b1cd2e2-2bde-40ca-80a9-0ac5550fc4b9",
+        "357704a9-fe7b-41eb-94a1-f69dc4b1e906"
+      ],
+      "settings": {
+        "layout_style": "5",
+        "bg_color": "",
+        "copy_color": "",
+        "eyebrow": "",
+        "heading": "Summer sun (hide mvp)",
+        "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Odio semper at ullamcorper tempor risus risus, viverra pharetra, sed. Nibh venenatis porta varius eu vitae bibendum.",
+        "button_text": "Shop All",
+        "button_link": "shopify:\/\/collections"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "1662383182c80b776d",
+    "1662383317502959b0"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "sections": {
+    "main": {
+      "type": "search-template-boost-pfs-filter",
+      "settings": {
+        "backup_collection": "coming-soon-2"
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

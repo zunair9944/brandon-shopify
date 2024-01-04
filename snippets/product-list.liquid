@@ -1,0 +1,82 @@
+{%- comment -%}
+  Renders a section with a list or a slider of products
+  Accepts:
+  - title: {String}
+  - text_color: {String}
+  - bg_color: {String}
+  - collection: {Collecion} Products of this collection will be rendered in this snippet
+  - footer_button_text: {String}
+  - footer_button_link: {String}
+  - product_recommendations_id: {Number} the products will be replaced with the Shopify recommendation for a specific product.
+{%- endcomment -%}
+
+{%- render 'stylesheet', name: 'swiper', loading: 'defer' -%}
+{%- render 'stylesheet', name: 'products-list' -%}
+
+{%- liquid 
+  assign products_array = collection.products
+  if recommendations.performed and recommendations.products_count > 0
+    assign products_array = recommendations.products
+  endif
+
+  if recommendations.performed
+    assign footer_button_link = routes.all_products_collection_url
+  endif
+-%}
+
+<products-list 
+  {% if product_recommendations_id %}data-recommendations="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product_recommendations_id }}&limit=6"{% endif %}
+  style="
+    {%- if text_color != blank and text_color != 'rgba(0,0,0,0)' -%}
+      --text-color: {{ text_color }};
+    {%- endif -%}
+    {%- if bg_color != blank and bg_color != 'rgba(0,0,0,0)' -%}
+      --bg-color: {{ bg_color }};
+    {%- endif -%}
+  "
+>
+  <div class="products-list__header">
+    <div class="products-list__title-box">
+      {%- if title -%}
+        {%- assign title = title | escape -%}
+        <h2 class="products-list__title h3">{%- render 'italic-first-word', text: title -%}</h2>
+      {%- endif -%}
+    </div>
+    <div class="products-list__nav-box">
+      <button class="products-list__nav-button nav-button button-3" data-direction="prev" type="button">
+        <span class="products-list__nav-button-icon nav-button__icon">{% render 'icon-left-long' %}</span>
+      </button>
+      <button class="products-list__nav-button nav-button button-3" data-direction="next" type="button">
+        <span class="products-list__nav-button-icon nav-button__icon">{% render 'icon-right-long' %}</span>
+      </button>
+    </div>
+  </div>
+  
+  <div class="products-list__content swiper">
+    <ul class="list product-cards swiper-wrapper" data-list="product-cards">
+      {%- for product in products_array -%}
+        {%- assign product_title_downcase = product.title | downcase -%}
+        {%- unless product_title_downcase contains 'package protection' -%}
+          <li class="product-card__item swiper-slide">
+            {%- render 'product-card' with product: product -%}
+          </li>
+        {%- endunless -%}
+      {%- endfor -%}  
+    </ul>
+
+    <div class="products-list__nav-box--mobile">
+      <button class="products-list__nav-button nav-button button-3" data-direction="prev" type="button">
+        <span class="products-list__nav-button-icon nav-button__icon">{% render 'icon-left' %}</span>
+      </button>
+      <button class="products-list__nav-button nav-button button-3" data-direction="next" type="button">
+        <span class="products-list__nav-button-icon nav-button__icon">{% render 'icon-right' %}</span>
+      </button>
+    </div>
+  </div>
+
+  {%- if footer_button_text and footer_button_link -%}
+    <div class="products-list__footer">
+      <a class="products-list__button button-1 button-1--alt" href="{{ footer_button_link }}">{{ footer_button_text | escape }}</a>
+    </div>
+  {%- endif -%}
+</products-list>

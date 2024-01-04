@@ -1,0 +1,14 @@
+{
+  "sections": {
+    "main": {
+      "type": "collection-template-boost-pfs-filter",
+      "settings": {
+        "tab_menu": "collection-tab-menu",
+        "backup_collection": "coming-soon-2"
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

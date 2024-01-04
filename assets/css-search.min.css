@@ -1,0 +1,1 @@
+.section-search{padding-left:var(--distance-base);padding-right:var(--distance-base)}.section-search:not([data-active-tab=products]) .search__content-backup,.section-search[data-active-tab=products][data-has-products-results=true] .search__content-backup{display:none}

@@ -1,0 +1,107 @@
+{%- render 'stylesheet', name: 'swiper', loading: 'defer' -%}
+
+{%- liquid
+  assign messages = section.blocks | where: 'type', 'message'
+  assign total_messages = messages.size
+-%}
+
+{%- if total_messages > 0 -%}
+  {%- render 'stylesheet', name: 'announcement-bar' -%}
+
+  {%- assign annoucement_bar = section.settings -%}
+
+  <announcement-bar
+    data-section-id="{{ section.id }}"
+    data-autoscroll-time="{{ annoucement_bar.autoscroll_time }}"
+    data-slider-id="header-announcement"
+    data-has-multiple-slides="{%- if total_messages > 1 -%}true{%- else -%}false{%- endif -%}"
+  >
+    <div
+      class="announcement-messages-container swiper"
+      style="
+        {%- if annoucement_bar.bg_color != blank and annoucement_bar.bg_color != 'rgba(0,0,0,0)' -%}
+          --bg-color: {{ annoucement_bar.bg_color }};
+        {%- endif -%}
+      "
+    >
+      <ul
+        class="list swiper-wrapper"
+        data-list="announcement-messages"
+      >
+        {%- for message_block in messages -%}
+          {%- assign message = message_block.settings -%}
+          {%- if message.text != blank -%}
+            <li class="announcement-message swiper-slide">
+              <div
+                class="announcement-message__text"
+                style="
+                  {%- if message.text_color != blank and message.text_color != 'rgba(0,0,0,0)' -%}
+                    --text-color: {{ message.text_color }};
+                  {%- endif -%}
+                "
+              >
+                {{ message.text }}
+              </div>
+            </li>
+          {%- endif -%}
+        {%- endfor -%}
+      </ul>
+
+      <button type="button" class="announcement-message__button" data-direction="prev">
+        <span class="announcement-message__button-icon">{%- render 'icon-left' -%}</span>
+      </button>
+
+      <button type="button" class="announcement-message__button" data-direction="next">
+        <span class="announcement-message__button-icon">{%- render 'icon-right' -%}</span>
+      </button>
+
+      <button type="button" class="announcement-message__button" data-action="close">
+        <span class="announcement-message__button-icon">{%- render 'icon-close' -%}</span>
+      </button>
+    </div>
+  </announcement-bar>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Announcement Bar",
+  "tag": "section",
+  "class": "section-announcement-bar",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Add at least two messages"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background color"
+    },
+    {
+      "type": "number",
+      "id": "autoscroll_time",
+      "label": "Autoscroll time",
+      "default": 3000
+    }
+  ],
+  "blocks": [
+    {
+      "type": "message",
+      "name": "Message",
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>Vestibulum hendrerit risus vel nulla ornare <a href='#'>tincidunt</a></p>"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Text color"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,55 @@
+{%- render 'stylesheet', name: 'pagination' -%}
+
+{%- if paginate.pages > 1 -%}
+  <nav class="pagination-nav" role="navigation">
+    <ol class="pagination">
+      {%- if paginate.previous -%}
+        <li class="pagination-action-link">
+          <a class="pagination-link" href="{{ paginate.previous.url }}">
+            {%- render 'icon-pagination-left' -%}
+            <span data-fb-link="mobile">Prev</span>
+          </a>
+        </li>
+      {%- else -%}
+        <li class="disabled-pagination-link pagination-action-link">
+          {%- render 'icon-pagination-left' -%}
+          <span data-fb-link="mobile">Prev</span>
+        </li>
+      {%- endif -%}
+
+      {%- for part in paginate.parts -%}
+        {%- if part.is_link -%}
+          <li>
+            <a class="pagination-counter" href="{{ part.url }}">
+              {{ part.title }}
+            </a>
+          </li>
+        {%- else -%}
+          {%- if part.title == paginate.current_page -%}
+            <li class="pagination-counter active-pagination-link" aria-current="page">
+              {{ part.title }}
+            </li>
+          {%- else -%}
+            <li class="pagination-counter">
+              {{ part.title }}
+            </li>
+          {%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+
+      {%- if paginate.next -%}
+        <li class="pagination-action-link">
+          <a class="pagination-link" href="{{ paginate.next.url }}">
+            <span data-fb-link="mobile">Next</span>
+            {%- render 'icon-pagination-right' -%}
+          </a>
+        </li>
+      {%- else -%}
+        <li class="disabled-pagination-link pagination-action-link">
+          <span data-fb-link="mobile">Next</span>
+          {%- render 'icon-pagination-right' -%}
+        </li>
+      {%- endif -%}
+    </ol>
+  </nav>
+{%- endif -%}

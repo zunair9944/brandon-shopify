@@ -1,0 +1,83 @@
+<script>
+    function addScript(url, callback) {
+      var script = document.createElement("script");
+  
+      script.type = "text/javascript";
+  
+      if (script.readyState) {
+        script.onreadystatechange = function () {
+          if (script.readyState == "loaded" || script.readyState == "complete") {
+            script.onreadystatechange = null;
+            callback();
+          }
+        };
+      } else {
+        script.onload = function () {
+          callback();
+        };
+      }
+  
+      script.src = url;
+      document.getElementsByTagName("head")[0].appendChild(script);
+    }
+  
+    const SITE_ID = "8780149";
+  
+    class DYCheckout {
+      constructor() {
+        this.injectDyScripts(SITE_ID);
+      }
+  
+      async injectDyScripts(id) {
+        if (id && id !== "") {
+          window.DY = window.DY || {};
+          DY.recommendationContext = { type: "OTHER" };
+          const cdn = id.charAt(0) === "9" ? "eu" : "com";
+          const _this = this;
+          addScript(
+            `//cdn.dynamicyield.${cdn}/api/${id}/api_dynamic.js`,
+            function () {
+              addScript(
+                `//cdn.dynamicyield.${cdn}/api/${id}/api_static.js`,
+                _this.injectPurchaseEvent
+              );
+            }
+          );
+        }
+      }
+  
+      injectPurchaseEvent() {
+        if (window?.Shopify?.Checkout?.step === "thank_you") {
+          const dyid = DYO.UserUtils.getDyid();
+          const { line_items, order_id, currency, total_price } =
+            window.Shopify.checkout;
+          
+          const cartData = line_items.map((item) => {
+            return {
+              productId: item.variant_id,
+              quantity: item.quantity,
+              itemPrice: parseFloat(item.price),
+            };
+          });
+  
+          const dyPurchaseData = {
+            name: "Purchase",
+            properties: {
+              uniqueTransactionId: order_id,
+              dyType: "purchase-v1",
+              value: parseFloat(total_price),
+              currency: currency,
+              cart: cartData,
+            },
+          };
+         try{
+            DY.API("event", dyPurchaseData);
+          }catch(error){
+          }
+        }
+      }
+    }
+  
+    new DYCheckout();
+  
+  </script>

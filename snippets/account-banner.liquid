@@ -1,0 +1,14 @@
+<div class="account__banner">
+  <div role="heading" class="banner__heading">
+    <div class="banner__heading-talic-text">
+      <h1>
+        {%- assign heading = account_banner_text | t -%}
+        {%- render 'italic-first-word', text: heading -%}
+      </h1>
+    </div>
+  </div>
+ {%- if settings.account_banner != blank -%}
+  {{ settings.account_banner | image_url: width: "1460x1093" | image_tag: preload: true, loading: "lazy" , alt: settings.account_banner.alt, class: 'banner__image' }}
+ {%- endif -%}
+</div>
+ 

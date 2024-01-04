@@ -1,0 +1,14 @@
+{% assign malomo_base_url = "{{ shop.url }}/pages/order-tracking" %}
+
+{% if order.fulfillment.tracking_company %}
+  {% capture carrier %}{{ order.fulfillment.tracking_company }}{% endcapture %}
+{% endif %}
+
+{% if carrier and carrier != blank and carrier != "Other" %}
+  {% capture tracking_url %}{{ malomo_base_url }}/?_m_alt_id={{ order.id }}{% endcapture %}
+{% elsif order_status_url %}
+  {% capture tracking_url %}{{ order_status_url }}{% endcapture %}
+{% endif %}
+
+{% comment %} END MALOMO {% endcomment %}
+<a href="{{ tracking_url }}" target="_new" class="{{ class }}">{{ text }}</a>
